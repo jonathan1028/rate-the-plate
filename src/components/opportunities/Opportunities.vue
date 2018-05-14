@@ -26,7 +26,7 @@
 
 <script>
 import OpportunitiesTable from './OpportunitiesTable'
-import { ALL_OPPORTUNITIES_QUERY } from '../constants/graphql'
+import { ALL_OPPORTUNITIES_QUERY } from '../../constants/graphql'
 import CreateOpportunity from './CreateOpportunity'
 
 export default {

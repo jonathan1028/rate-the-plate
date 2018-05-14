@@ -12,28 +12,13 @@ export const ALL_USERS_QUERY = gql`
     }
   }
 `
-
-export const ALL_LINKS_QUERY = gql`
-  query AllLinksQuery($first: Int, $skip: Int, $orderBy: LinkOrderBy) {
-    allLinks(first: $first, skip: $skip, orderBy: $orderBy) {
+export const ALL_EXPENSES_QUERY = gql`
+  query AllExpensesQuery {
+    allExpenses {
       id
-      createdAt
-      url
+      date
       description
-      postedBy {
-        id
-        name
-      }
-      votes {
-        id
-        user {
-          id
-        }
-      }
-    }
-    # gives you access to the count of the links
-    _allLinksMeta {
-      count
+      amount
     }
   }
 `
@@ -55,6 +40,7 @@ export const ALL_PEOPLE_QUERY = gql`
     }
   }
 `
+
 export const ALL_OPPORTUNITIES_QUERY = gql`
   query AllOpportunitiesQuery {
     allOpportunities {
@@ -150,6 +136,21 @@ export const SIGNIN_USER_MUTATION = gql`
   }
 `
 
+export const CREATE_EXPENSE_MUTATION = gql`
+  mutation CreateExpenseMutation($date: DateTime!, $amount: Float, $description: String) {
+    createExpense(
+      date: $date
+      description: $description
+      amount: $amount
+    ) {
+      id
+      date
+      description
+      amount
+    }
+  }
+`
+
 export const CREATE_PERSON_MUTATION = gql`
   mutation CreatePersonMutation($displayName: String!, $firstName: String, $lastName: String, 
     $phone1: String, $email: String, $ownedById: ID!) {
@@ -202,6 +203,17 @@ export const UPDATE_USER_MUTATION = gql`
     ) {
       id
       name
+    }
+  }
+`
+
+export const UPDATE_EXPENSE_MUTATION = gql`
+  mutation UpdateExpenseMutation($id: ID!, $amount: Float) {
+    updateExpense(
+      id: $id,
+      amount: $amount
+    ) {
+      id
     }
   }
 `

@@ -52,8 +52,8 @@
 
 <script>
 // import { CREATE_PERSON_MUTATION } from '../constants/graphql'
-import { CREATE_OPPORTUNITY_MUTATION, ALL_OPPORTUNITIES_QUERY } from '../constants/graphql'
-import { GC_USER_ID } from '../constants/settings'
+import { CREATE_OPPORTUNITY_MUTATION, ALL_OPPORTUNITIES_QUERY } from '../../constants/graphql'
+import { GC_USER_ID } from '../../constants/settings'
 
 export default {
   name: 'CreateOpportunity',

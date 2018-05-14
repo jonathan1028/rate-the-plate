@@ -1,15 +1,19 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 
-import AppLogin from '../components/AppLogin'
-import People from '../components/People'
-import ReadPerson from '../components/ReadPerson'
-import UpdatePerson from '../components/UpdatePerson'
-import Opportunities from '../components/Opportunities'
+import AppLogin from '../components/app/AppLogin'
+import People from '../components/people/People'
+import ReadPerson from '../components/people/ReadPerson'
+import UpdatePerson from '../components/people/UpdatePerson'
+import Opportunities from '../components/opportunities/Opportunities'
 import Admin from '../components/admin/Admin'
 import UpdateUser from '../components/admin/UpdateUser'
 import ReadUser from '../components/admin/ReadUser'
 import NewUsers from '../components/admin/NewUsers'
+
+import Expenses from '../components/expenses/Expenses'
+import ReadExpense from '../components/expenses/ReadExpense'
+import UpdateExpense from '../components/expenses/UpdateExpense'
 // import { GC_USER_ID } from '../constants/settings'
 
 // let userId = localStorage.getItem(GC_USER_ID)
@@ -43,6 +47,23 @@ export default new Router({
       path: '/person/update/:id',
       component: UpdatePerson,
       name: 'updatePerson'
+    },
+    // ------------------------------------------ Expense ----------------------------------
+    {
+      path: '/expenses',
+      component: Expenses
+      // meta: {
+      //   requiresAuth: true
+      // }
+    },
+    {
+      path: '/expense/:id',
+      component: ReadExpense
+    },
+    {
+      path: '/expense/update/:id',
+      component: UpdateExpense,
+      name: 'updateExpense'
     },
     // ------------------------------------------ Opportunities ----------------------------------
     {

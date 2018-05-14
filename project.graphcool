@@ -1,5 +1,5 @@
-# project: cjeq87ww03gm801881tjhtlyu
-# version: 9
+# project: cjgn20e3o4i1w0105pjn3t5p6
+# version: 4
 
 type User @model {
   id: ID! @isUnique
@@ -10,6 +10,8 @@ type User @model {
   name: String
   persons: [Person!]! @relation(name: "UsersPersons")
   opportunities: [Opportunity!]! @relation(name: "UserOpportunities")
+  vendors: [Vendor!]! @relation(name: "UserOnVendor")
+  incomes: [Income!]! @relation(name: "UserOnIncome")
 }
 
 type File @model {
@@ -54,4 +56,37 @@ type Opportunity @model {
   description: String
   contacts: [Person!]! @relation(name: "PersonOpportunities")
   ownedBy: User @relation(name: "UserOpportunities")
+}
+
+type Expense @model {
+  id: ID! @isUnique
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  amount: Float
+  category: String
+  description: String
+  date: DateTime!
+  vendor: Vendor @relation(name: "VendorOnExpense")
+}
+
+type Income @model {
+  id: ID! @isUnique
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  amount: Float
+  category: String
+  description: String
+  date: DateTime!
+  vendor: Vendor @relation(name: "VendorOnIncome")
+  ownedBy: User! @relation(name: "UserOnIncome")
+}
+
+type Vendor @model {
+  id: ID! @isUnique
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  name: String
+  income: Income @relation(name: "VendorOnIncome")
+  expense: Expense @relation(name: "VendorOnExpense")
+  ownedBy: User! @relation(name: "UserOnVendor")
 }

@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import apolloProvider from './apollo-provider'
-import App from './components/App'
+import App from './components/app/App'
 import router from './router'
 import { GC_USER_ID } from './constants/settings'
 import store from './store'

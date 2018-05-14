@@ -8,6 +8,8 @@
           <div class="nav-buttons">
             <!-- Logged in navigation -->
             <div class="authenticated-nav" v-if="userId">
+              <router-link to="/expenses">Expenses</router-link>
+              <div>|</div>
               <router-link to="/people">People</router-link>
               <div>|</div>
               <router-link to="/opportunities">Opportunities</router-link>
@@ -30,7 +32,7 @@
 </template>
 
 <script>
-import { GC_USER_ID, GC_AUTH_TOKEN } from '../constants/settings'
+import { GC_USER_ID, GC_AUTH_TOKEN } from '../../constants/settings'
 
 export default {
   name: 'AppHeader',

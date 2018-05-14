@@ -29,8 +29,8 @@
           :index="index"
           @click="viewPerson(entry)"
         >
-        <div v-if="isContacts(col.dbField)">
-          {{getNames(entry[col.dbField])}}
+        <div v-if="isOwner(col.dbField)">
+          {{getName(entry[col.dbField])}}
         </div>
          <div v-else>
           {{entry[col.dbField]}}
@@ -50,10 +50,10 @@
 </template>
 
 <script>
-import { ALL_PEOPLE_QUERY, DELETE_PERSON_MUTATION } from '../constants/graphql'
+import { ALL_PEOPLE_QUERY, DELETE_PERSON_MUTATION } from '../../constants/graphql'
 
 export default {
-  name: 'OpportunitiesTable',
+  name: 'VueTable',
   props: {
     data: Array,
     columns: Array,
@@ -99,23 +99,16 @@ export default {
     }
   },
   methods: {
-    isContacts: function (field) {
-      if (field === 'contacts') {
+    isOwner: function (field) {
+      if (field === 'ownedBy') {
         return true
       } else {
         return false
       }
     },
-    getNames: function (contacts) {
-      if (contacts[0]) {
-        // let names = ''
-        // contacts.map(x => {
-        //   names = names + x.displayName
-        // })
-        // return names
-        console.log('Contacts', contacts)
-        let name = contacts[0].displayName
-        return name
+    getName: function (owner) {
+      if (owner && owner.name) {
+        return owner.name
       } else {
         return ''
       }
