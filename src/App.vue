@@ -1,26 +1,85 @@
 <template>
-  <div id="app">
+  <div>
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="#">Auth0 - Vue</a>
+
+          <router-link :to="'/'"
+            class="btn btn-primary btn-margin">
+              Home
+          </router-link>
+
+          <button
+            id="qsLoginBtn"
+            class="btn btn-primary btn-margin"
+            v-if="!authenticated"
+            @click="login()">
+              Log In
+          </button>
+
+          <button
+            id="qsLogoutBtn"
+            class="btn btn-primary btn-margin"
+            v-if="authenticated"
+            @click="logout()">
+              Log Out
+          </button>
+
+        </div>
+      </div>
+    </nav>
+
+    <div class="container">
+      <router-view
+        :auth="auth"
+        :authenticated="authenticated">
+      </router-view>
+    </div>
+  </div>
+  <!-- <div id="app">
       <app-header></app-header>
       <div class="main-content">
         <router-view></router-view>
-        <!-- Standard page layout code -->
       </div>
-  </div>
+  </div> -->
 </template>
 
 <script>
-import AppHeader from './AppHeader'
+import AuthService from './auth/AuthService'
+
+const auth = new AuthService()
+
+const { login, logout, authenticated, authNotifier } = auth
 
 export default {
   name: 'app',
-  components: {
-    AppHeader
+  data () {
+    authNotifier.on('authChange', authState => {
+      this.authenticated = authState.authenticated
+    })
+    return {
+      auth,
+      authenticated
+    }
+  },
+  methods: {
+    login,
+    logout
   }
 }
+// import AppHeader from './AppHeader'
+
+// export default {
+//   name: 'app',
+//   components: {
+//     AppHeader
+//   }
+// }
 </script>
 
 <style>
-html {
+/* html {
   background-color: whitesmoke;
   font-family: 'Open Sans', sans-serif;
 }
@@ -36,7 +95,7 @@ html {
   padding: 1%;
   /* border: 1px solid #BFBFBF;
   background-color: white;
-  box-shadow: 3px 3px 3px 3px #aaaaaa; */
+  box-shadow: 3px 3px 3px 3px #aaaaaa;
   -webkit-box-shadow: 0 1px 2px #777;
   -moz-box-shadow: 0 2px 1px #777;
   box-shadow: 0 2px 1px #777;
@@ -56,7 +115,6 @@ label {
   display: block;
   text-align: right;
   padding-right: 5%;
-  /* border: .5px solid lightgray; */
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -64,7 +122,6 @@ label {
 
 .field {
   width: 50%;
-  /* border: .5px solid lightgray; */
   margin-bottom: 1%;
   display: flex;
   align-items: center;
@@ -78,8 +135,7 @@ input{
 
 input:hover{
   border: .5px solid gray;
-  /* background-color: white;
-  box-shadow: 3px 3px 3px 3px #aaaaaa; */
+
 }
 
 button{
@@ -94,42 +150,5 @@ button:hover{
   -webkit-box-shadow:0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
   -moz-box-shadow:0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
   box-shadow:0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
-}
-
-  /* body {
-    margin: 0;
-    padding: 0;
-    font-family: Verdana, Geneva, sans-serif;
-  }
-  input {
-    max-width: 500px;
-  }
-  .gray {
-    color: #828282;
-  }
-  .orange {
-    background-color: #ff6600;
-  }
-  .background-gray {
-    background-color: rgb(246,246,239);
-  }
-  .f11 {
-    font-size: 11px;
-  }
-  .w85 {
-    width: 85%;
-  }
-  .button {
-    font-family: monospace;
-    font-size: 10pt;
-    color: black;
-    background-color: buttonface;
-    text-align: center;
-    padding: 2px 6px 3px;
-    border-width: 2px;
-    border-style: outset;
-    border-color: buttonface;
-    cursor: pointer;
-    max-width: 250px;
-  } */
+} */
 </style>
