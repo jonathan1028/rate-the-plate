@@ -7,32 +7,58 @@
           <!-- Main navigation -->
           <div class="nav-buttons">
             <!-- Logged in navigation -->
-            <div class="authenticated-nav" v-if="userId">
+            <!-- <div class="authenticated-nav" v-if="userId">
               <router-link to="/expenses">Expenses</router-link>
               <div>|</div>
               <router-link to="/people">People</router-link>
               <div>|</div>
               <router-link to="/opportunities">Opportunities</router-link>
               <div>|</div>
-            </div>
+            </div> -->
             <router-link to="/admin">Admin Panel</router-link>
             <div>|</div>
             <router-link to="/newusers">New User Accounts</router-link>
           </div>
         </div>
         <!-- Login buttons   -->
-        <div class="login">
+        <button
+          id="qsLoginBtn"
+          class="btn btn-primary btn-margin"
+          v-if="!authenticated"
+          @click="login()">
+            Log In
+        </button>
+
+        <button
+          id="qsLogoutBtn"
+          class="btn btn-primary btn-margin"
+          v-if="authenticated"
+          @click="logout()">
+            Log Out
+        </button>
+        <!-- <div class="login">
           <a>
             <div v-if="userId" @click="logout()">Logout</div>
             <router-link v-else to="/login">Login</router-link>
           </a>
-        </div>
+        </div> -->
     </div>
+    <!-- <router-view></router-view> -->
+    <router-view
+        :auth="auth"
+        :authenticated="authenticated">
+      </router-view>
   </div>
 </template>
 
 <script>
-import { GC_USER_ID, GC_AUTH_TOKEN } from '../../constants/settings'
+// import { GC_USER_ID, GC_AUTH_TOKEN } from '../../constants/settings'
+
+import AuthService from '../../auth/AuthService'
+
+const auth = new AuthService()
+
+const { login, logout, authenticated, authNotifier } = auth
 
 export default {
   name: 'AppHeader',
@@ -44,23 +70,34 @@ export default {
       return this.$root.$data.userId
     }
   },
-  methods: {
-    logout () {
-      localStorage.removeItem(GC_USER_ID)
-      localStorage.removeItem(GC_AUTH_TOKEN)
-      this.$root.$data.userId = localStorage.getItem(GC_USER_ID)
+  data () {
+    authNotifier.on('authChange', authState => {
+      this.authenticated = authState.authenticated
+    })
+    return {
+      auth,
+      authenticated
     }
+  },
+  methods: {
+    login,
+    logout
+    // logout () {
+    //   localStorage.removeItem(GC_USER_ID)
+    //   localStorage.removeItem(GC_AUTH_TOKEN)
+    //   this.$root.$data.userId = localStorage.getItem(GC_USER_ID)
+    // }
   }
 }
 </script>
 
 <style>
 .header{
-  position: fixed;
+  /* position: fixed; */
   width: 100%;
   height: 40px;
   background-color: white;
-  top: 0;
+  /* top: 0; */
   -webkit-box-shadow:0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
   -moz-box-shadow:0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
   box-shadow:0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;

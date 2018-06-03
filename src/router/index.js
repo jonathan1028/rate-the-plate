@@ -3,6 +3,8 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Home from '@/components/Home'
 import Callback from '@/components/Callback'
+import Expenses from '../components/expenses/Expenses'
+import AppHeader from '@/components/app/AppHeader'
 
 Vue.use(Router)
 
@@ -10,15 +12,41 @@ const router = new Router({
   mode: 'history',
   routes: [
     {
-      path: '/home',
-      name: 'Home',
-      component: Home
+      path: '/',
+      component: AppHeader,
+      children: [
+        {
+          path: '/home',
+          name: 'Home',
+          component: Home
+          // meta: {
+          //   requiresAuth: false,
+          //   breadcrumb: 'Home'
+          // }
+        },
+        {
+          path: '/',
+          redirect: '/home'
+        },
+        {
+          path: '/callback',
+          name: 'Callback',
+          component: Callback
+        },
+        {
+          path: '/expenses',
+          component: Expenses
+          // meta: {
+          //   requiresAuth: true
+          // }
+        }
+      ]
     },
-    {
-      path: '/callback',
-      name: 'Callback',
-      component: Callback
-    },
+    // {
+    //   path: '/home',
+    //   name: 'Home',
+    //   component: Home
+    // },
     {
       path: '*',
       redirect: '/home'
@@ -41,7 +69,6 @@ export default router
 // import ReadUser from '../components/admin/ReadUser'
 // import NewUsers from '../components/admin/NewUsers'
 
-// import Expenses from '../components/expenses/Expenses'
 // import ReadExpense from '../components/expenses/ReadExpense'
 // import UpdateExpense from '../components/expenses/UpdateExpense'
 // // import { GC_USER_ID } from '../constants/settings'

@@ -1,16 +1,16 @@
 <template>
   <div>
+    <!-- <app-header></app-header> -->
     <nav class="navbar navbar-default">
       <div class="container-fluid">
         <div class="navbar-header">
           <a class="navbar-brand" href="#">Auth0 - Vue</a>
-
           <router-link :to="'/'"
             class="btn btn-primary btn-margin">
               Home
           </router-link>
 
-          <button
+          <!-- <button
             id="qsLoginBtn"
             class="btn btn-primary btn-margin"
             v-if="!authenticated"
@@ -24,16 +24,14 @@
             v-if="authenticated"
             @click="logout()">
               Log Out
-          </button>
+          </button> -->
 
         </div>
       </div>
     </nav>
 
     <div class="container">
-      <router-view
-        :auth="auth"
-        :authenticated="authenticated">
+      <router-view>
       </router-view>
     </div>
   </div>
@@ -46,27 +44,31 @@
 </template>
 
 <script>
-import AuthService from './auth/AuthService'
+// import AppHeader from './components/app/AppHeader'
+// import AuthService from './auth/AuthService'
 
-const auth = new AuthService()
+// const auth = new AuthService()
 
-const { login, logout, authenticated, authNotifier } = auth
+// const { login, logout, authenticated, authNotifier } = auth
 
 export default {
-  name: 'app',
-  data () {
-    authNotifier.on('authChange', authState => {
-      this.authenticated = authState.authenticated
-    })
-    return {
-      auth,
-      authenticated
-    }
-  },
-  methods: {
-    login,
-    logout
-  }
+  name: 'app'
+  // components: {
+  //   AppHeader
+  // },
+  // data () {
+  //   authNotifier.on('authChange', authState => {
+  //     this.authenticated = authState.authenticated
+  //   })
+  //   return {
+  //     auth,
+  //     authenticated
+  //   }
+  // },
+  // methods: {
+  //   login,
+  //   logout
+  // }
 }
 // import AppHeader from './AppHeader'
 
@@ -79,7 +81,7 @@ export default {
 </script>
 
 <style>
-/* html {
+html {
   background-color: whitesmoke;
   font-family: 'Open Sans', sans-serif;
 }
@@ -93,7 +95,7 @@ export default {
   background-color: white;
   margin-top: 1%;
   padding: 1%;
-  /* border: 1px solid #BFBFBF;
+  border: 1px solid #BFBFBF;
   background-color: white;
   box-shadow: 3px 3px 3px 3px #aaaaaa;
   -webkit-box-shadow: 0 1px 2px #777;
@@ -150,5 +152,5 @@ button:hover{
   -webkit-box-shadow:0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
   -moz-box-shadow:0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
   box-shadow:0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
-} */
+}
 </style>

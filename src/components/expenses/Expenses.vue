@@ -1,5 +1,6 @@
 <template>
   <div>
+    <h1>User is Authenticated: {{authenticated}}</h1>
     <span v-if="this.$store.state.showCreateExpense">
       <create-expense :data="{columns, options}"></create-expense>
     </span>
@@ -36,6 +37,7 @@ export default {
   components: {
     CreateExpense, ExpensesTable, VueEditortable, NewExpensesTable
   },
+  props: ['auth', 'authenticated'],
   data () {
     return {
       showCreateExpense: this.$store.showCreateExpense,
@@ -81,6 +83,9 @@ export default {
   methods: {
     openCreate () {
       this.$store.commit('toggleCreateExpense')
+      if (this.authenticated) {
+        console.log('User Authenticated')
+      }
     }
   },
   apollo: {
