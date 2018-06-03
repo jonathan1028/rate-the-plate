@@ -4,7 +4,8 @@ import Router from 'vue-router'
 import Home from '@/components/Home'
 import Callback from '@/components/Callback'
 import Expenses from '../components/expenses/Expenses'
-import AppHeader from '@/components/app/AppHeader'
+import PublicHeader from '@/components/app/PublicHeader'
+import UserConsoleHeader from '@/components/userConsole/UserConsoleHeader'
 
 Vue.use(Router)
 
@@ -13,7 +14,7 @@ const router = new Router({
   routes: [
     {
       path: '/',
-      component: AppHeader,
+      component: PublicHeader,
       children: [
         {
           path: '/home',
@@ -32,7 +33,17 @@ const router = new Router({
           path: '/callback',
           name: 'Callback',
           component: Callback
-        },
+        }
+      ]
+    },
+    {
+      path: '*',
+      redirect: '/home'
+    },
+    {
+      path: '/',
+      component: UserConsoleHeader,
+      children: [
         {
           path: '/expenses',
           component: Expenses
@@ -41,15 +52,6 @@ const router = new Router({
           // }
         }
       ]
-    },
-    // {
-    //   path: '/home',
-    //   name: 'Home',
-    //   component: Home
-    // },
-    {
-      path: '*',
-      redirect: '/home'
     }
   ]
 })

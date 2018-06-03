@@ -1,83 +1,13 @@
 <template>
-  <div>
-    <!-- <app-header></app-header> -->
-    <nav class="navbar navbar-default">
-      <div class="container-fluid">
-        <div class="navbar-header">
-          <a class="navbar-brand" href="#">Auth0 - Vue</a>
-          <router-link :to="'/'"
-            class="btn btn-primary btn-margin">
-              Home
-          </router-link>
-
-          <!-- <button
-            id="qsLoginBtn"
-            class="btn btn-primary btn-margin"
-            v-if="!authenticated"
-            @click="login()">
-              Log In
-          </button>
-
-          <button
-            id="qsLogoutBtn"
-            class="btn btn-primary btn-margin"
-            v-if="authenticated"
-            @click="logout()">
-              Log Out
-          </button> -->
-
-        </div>
-      </div>
-    </nav>
-
-    <div class="container">
-      <router-view>
-      </router-view>
-    </div>
+  <div id="app">
+    <router-view></router-view>
   </div>
-  <!-- <div id="app">
-      <app-header></app-header>
-      <div class="main-content">
-        <router-view></router-view>
-      </div>
-  </div> -->
 </template>
 
 <script>
-// import AppHeader from './components/app/AppHeader'
-// import AuthService from './auth/AuthService'
-
-// const auth = new AuthService()
-
-// const { login, logout, authenticated, authNotifier } = auth
-
 export default {
-  name: 'app'
-  // components: {
-  //   AppHeader
-  // },
-  // data () {
-  //   authNotifier.on('authChange', authState => {
-  //     this.authenticated = authState.authenticated
-  //   })
-  //   return {
-  //     auth,
-  //     authenticated
-  //   }
-  // },
-  // methods: {
-  //   login,
-  //   logout
-  // }
+  name: 'App'
 }
-// import AppHeader from './AppHeader'
-
-// export default {
-//   name: 'app',
-//   components: {
-//     AppHeader
-//   }
-// }
 </script>
 
 <style>

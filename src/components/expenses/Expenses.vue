@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>User is Authenticated: {{authenticated}}</h1>
+    <h1>User is Authenticated: {{this.$store.state.isAuthenticated}}</h1>
     <span v-if="this.$store.state.showCreateExpense">
       <create-expense :data="{columns, options}"></create-expense>
     </span>

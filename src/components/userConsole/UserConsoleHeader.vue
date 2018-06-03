@@ -3,7 +3,7 @@
     <div class="header-content">
         <div class="main-nav">
           <!-- Logo -->
-          <div class="logo">Agilent CRM</div>
+          <div class="logo">Penny Pincher</div>
           <!-- Main navigation -->
           <div class="nav-buttons">
             <!-- Logged in navigation -->
@@ -24,7 +24,7 @@
         <button
           id="qsLoginBtn"
           class="btn btn-primary btn-margin"
-          v-if="!authenticated"
+          v-if="!this.$store.state.isAuthenticated"
           @click="login()">
             Log In
         </button>
@@ -32,7 +32,7 @@
         <button
           id="qsLogoutBtn"
           class="btn btn-primary btn-margin"
-          v-if="authenticated"
+          v-if="this.$store.state.isAuthenticated"
           @click="logout()">
             Log Out
         </button>
@@ -43,37 +43,28 @@
           </a>
         </div> -->
     </div>
-    <!-- <router-view></router-view> -->
-    <router-view
+    <router-view></router-view>
+    <!-- <router-view
         :auth="auth"
         :authenticated="authenticated">
-      </router-view>
+      </router-view> -->
   </div>
 </template>
 
 <script>
-// import { GC_USER_ID, GC_AUTH_TOKEN } from '../../constants/settings'
-
 import AuthService from '../../auth/AuthService'
 
 const auth = new AuthService()
-
-const { login, logout, authenticated, authNotifier } = auth
+const { login, logout, authenticated } = auth
 
 export default {
-  name: 'AppHeader',
-  computed: {
-    // You first retrieve the userId from this.$root.$data.
-    // If the userId is not available, the submit-button won’t be rendered anymore.
-    // That way you make sure only authenticated users can create new links
-    userId () {
-      return this.$root.$data.userId
-    }
-  },
+  name: 'UserConsoleHeader',
   data () {
-    authNotifier.on('authChange', authState => {
-      this.authenticated = authState.authenticated
-    })
+    // Without this function the page will not render
+    // authNotifier.on('authChange', authState => {
+    //   this.authenticated = authState.authenticated
+    // })
+    // this.$store.state.authInstance = auth
     return {
       auth,
       authenticated
@@ -82,11 +73,6 @@ export default {
   methods: {
     login,
     logout
-    // logout () {
-    //   localStorage.removeItem(GC_USER_ID)
-    //   localStorage.removeItem(GC_AUTH_TOKEN)
-    //   this.$root.$data.userId = localStorage.getItem(GC_USER_ID)
-    // }
   }
 }
 </script>

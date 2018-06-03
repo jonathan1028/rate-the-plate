@@ -5,7 +5,8 @@ Vue.use(Vuex)
 
 const store = new Vuex.Store({
   state: {
-    authenticated: false,
+    authInstance: false,
+    isAuthenticated: false,
     count: 0,
     person: {},
     showCreatePerson: false,
@@ -26,7 +27,7 @@ const store = new Vuex.Store({
       state.showCreateExpense = !state.showCreateExpense
     },
     toggleAuthentication (state) {
-      state.authenticated = !state.authenticated
+      state.isAuthenticated = !state.isAuthenticated
     }
   }
 })

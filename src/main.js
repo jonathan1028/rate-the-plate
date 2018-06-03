@@ -21,6 +21,7 @@ import store from './store'
 import moment from 'moment'
 
 let userId = localStorage.getItem(GC_USER_ID)
+let isAuthenticated = localStorage.getItem('isAuthenticated')
 
 Vue.use(Vuex)
 
@@ -42,7 +43,7 @@ new Vue({
   router,
   store,
   data: {
-    userId
+    userId, isAuthenticated
   },
   render: h => h(App)
 })
