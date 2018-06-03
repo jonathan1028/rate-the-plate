@@ -6,6 +6,7 @@ import Callback from '@/components/Callback'
 import Expenses from '../components/expenses/Expenses'
 import PublicHeader from '@/components/app/PublicHeader'
 import UserConsoleHeader from '@/components/userConsole/UserConsoleHeader'
+import store from '../store'
 
 Vue.use(Router)
 
@@ -20,10 +21,6 @@ const router = new Router({
           path: '/home',
           name: 'Home',
           component: Home
-          // meta: {
-          //   requiresAuth: false,
-          //   breadcrumb: 'Home'
-          // }
         },
         {
           path: '/',
@@ -46,14 +43,25 @@ const router = new Router({
       children: [
         {
           path: '/expenses',
-          component: Expenses
-          // meta: {
-          //   requiresAuth: true
-          // }
+          component: Expenses,
+          meta: {
+            requiresAuth: true
+          }
         }
       ]
     }
   ]
+})
+router.beforeEach((to, from, next) => {
+  let currentUser = store.state.isAuthenticated
+  let requiresAuth = to.matched.some(record => record.meta.requiresAuth)
+  if (requiresAuth && !currentUser) {
+    next('login')
+  // eslint-disable-next-line
+  }
+  else {
+    next()
+  }
 })
 
 export default router
