@@ -13,6 +13,15 @@
 export default {
   name: 'home',
   props: ['auth', 'authenticated']
+  // computed: {
+  //   isAuthenticated () {
+  //     if (localStorage.getItem('access_token')) {
+  //       return true
+  //     } else {
+  //       return false
+  //     }
+  //   }
+  // }
 }
 </script>
 

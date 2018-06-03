@@ -2,7 +2,7 @@ import auth0 from 'auth0-js'
 import { AUTH_CONFIG } from './auth0-variables'
 import EventEmitter from 'eventemitter3'
 import router from './../router'
-import store from '../store'
+import store from '../store/index'
 
 export default class AuthService {
   authenticated = this.isAuthenticated()
@@ -32,7 +32,7 @@ export default class AuthService {
     this.auth0.parseHash((err, authResult) => {
       if (authResult && authResult.accessToken && authResult.idToken) {
         this.setSession(authResult)
-        // router.replace('expenses')
+        router.replace('expenses')
       } else if (err) {
         router.replace('home')
         console.log(err)

@@ -6,7 +6,8 @@ import Callback from '@/components/Callback'
 import Expenses from '../components/expenses/Expenses'
 import PublicHeader from '@/components/app/PublicHeader'
 import UserConsoleHeader from '@/components/userConsole/UserConsoleHeader'
-import store from '../store'
+import { mapGetters } from 'vuex'
+// import store from '../store'
 
 Vue.use(Router)
 
@@ -43,17 +44,25 @@ const router = new Router({
       children: [
         {
           path: '/expenses',
-          component: Expenses,
-          meta: {
-            requiresAuth: true
-          }
+          component: Expenses
+          // meta: {
+          //   requiresAuth: true
+          // }
         }
       ]
     }
   ]
 })
 router.beforeEach((to, from, next) => {
-  let currentUser = store.state.isAuthenticated
+  let currentUser = mapGetters(['authenticated'])
+  if (mapGetters(['authenticated'])) {
+    console.log('Output it True')
+  }
+  console.log('Test Output', mapGetters(['authenticated']))
+  // if (localStorage.getItem('access_token')) {
+  //   currentUser = true
+  // }
+  // let currentUser = store.state.isAuthenticated
   let requiresAuth = to.matched.some(record => record.meta.requiresAuth)
   if (requiresAuth && !currentUser) {
     next('login')

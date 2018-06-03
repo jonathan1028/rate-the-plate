@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>User is Authenticated: {{this.$store.state.isAuthenticated}}</h1>
+    <h1>User is Authenticated: {{authenticated}}</h1>
     <span v-if="this.$store.state.showCreateExpense">
       <create-expense :data="{columns, options}"></create-expense>
     </span>
@@ -31,13 +31,15 @@ import NewExpensesTable from './NewExpensesTable'
 import { ALL_EXPENSES_QUERY } from '../../constants/graphql'
 import VueEditortable from 'vue-editortable'
 // import { ALL_PEOPLE_QUERY, NEW_PEOPLE_SUBSCRIPTION } from '../constants/graphql'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'Expenses',
   components: {
     CreateExpense, ExpensesTable, VueEditortable, NewExpensesTable
   },
-  props: ['auth', 'authenticated'],
+  // props: ['auth', 'authenticated'],
+  computed: mapGetters(['authenticated']),
   data () {
     return {
       showCreateExpense: this.$store.showCreateExpense,
