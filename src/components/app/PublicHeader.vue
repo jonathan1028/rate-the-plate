@@ -13,64 +13,28 @@
         </div>
         <!-- Login buttons   -->
         <button
-          id="qsLoginBtn"
-          class="btn btn-primary btn-margin"
           v-if="!authenticated"
           @click="login()">
             Log In
         </button>
 
         <button
-          id="qsLogoutBtn"
-          class="btn btn-primary btn-margin"
           v-if="authenticated"
           @click="logout()">
             Log Out
         </button>
     </div>
     <router-view></router-view>
-    <!-- <router-view
-        :auth="auth"
-        :authenticated="authenticated">
-    </router-view> -->
   </div>
 </template>
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
-// import AuthService from '../../auth/AuthService'
-
-// const auth = new AuthService()
-// const { authenticated, authNotifier } = auth
 
 export default {
   name: 'PublicHeader',
   computed: mapGetters(['authenticated']),
-  // computed: {
-  //   // You first retrieve the userId from this.$root.$data.
-  //   // If the userId is not available, the submit-button won’t be rendered anymore.
-  //   // That way you make sure only authenticated users can create new links
-  //   userId () {
-  //     return this.$root.$data.userId
-  //   }
-  // },
-  // data () {
-  //   // Event listener that listens for change in authentication
-  //   authNotifier.on('authChange', authState => {
-  //     this.authenticated = authState.authenticated
-  //   })
-  //   // Sets the authInstance in the store so that it can be retrieved by Callback.vue
-  //   // this.$store.state.authInstance = auth
-  //   return {
-  //     auth,
-  //     authenticated
-  //   }
-  // }
   methods: mapActions(['login', 'logout'])
-  // methods: {
-  //   login,
-  //   logout
-  // }
 }
 </script>
 

@@ -22,71 +22,28 @@
         </div>
         <!-- Login buttons   -->
         <button
-          id="qsLoginBtn"
-          class="btn btn-primary btn-margin"
           v-if="!authenticated"
           @click="login()">
             Log In
         </button>
 
         <button
-          id="qsLogoutBtn"
-          class="btn btn-primary btn-margin"
           v-if="authenticated"
           @click="logout()">
             Log Out
         </button>
-        <!-- <div class="login">
-          <a>
-            <div v-if="userId" @click="logout()">Logout</div>
-            <router-link v-else to="/login">Login</router-link>
-          </a>
-        </div> -->
     </div>
     <router-view></router-view>
-    <!-- <router-view
-        :auth="auth"
-        :authenticated="isAuthenticated">
-      </router-view> -->
   </div>
 </template>
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
-// import AuthService from '../../auth/AuthService'
-
-// const auth = new AuthService()
-// const { login, logout, authenticated } = auth
 
 export default {
   name: 'UserConsoleHeader',
   computed: mapGetters(['authenticated']),
   methods: mapActions(['login', 'logout'])
-  // props: ['authenticated'],
-  // computed: {
-  //   isAuthenticated () {
-  //     if (localStorage.getItem('access_token')) {
-  //       return true
-  //     } else {
-  //       return false
-  //     }
-  //   }
-  // },
-  // data () {
-  //   // Without this function the page will not render
-  //   // authNotifier.on('authChange', authState => {
-  //   //   this.authenticated = authState.authenticated
-  //   // })
-  //   // this.$store.state.authInstance = auth
-  //   return {
-  //     auth,
-  //     authenticated
-  //   }
-  // },
-  // methods: {
-  //   login,
-  //   logout
-  // }
 }
 </script>
 

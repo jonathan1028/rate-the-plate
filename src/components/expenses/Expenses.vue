@@ -27,18 +27,14 @@
 <script>
 import CreateExpense from './CreateExpense'
 import ExpensesTable from './ExpensesTable'
-import NewExpensesTable from './NewExpensesTable'
 import { ALL_EXPENSES_QUERY } from '../../constants/graphql'
-import VueEditortable from 'vue-editortable'
-// import { ALL_PEOPLE_QUERY, NEW_PEOPLE_SUBSCRIPTION } from '../constants/graphql'
 import { mapGetters } from 'vuex'
 
 export default {
   name: 'Expenses',
   components: {
-    CreateExpense, ExpensesTable, VueEditortable, NewExpensesTable
+    CreateExpense, ExpensesTable
   },
-  // props: ['auth', 'authenticated'],
   computed: mapGetters(['authenticated']),
   data () {
     return {
