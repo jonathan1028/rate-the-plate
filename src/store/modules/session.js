@@ -1,4 +1,5 @@
 import Authenticator from '../../auth/Authenticator'
+import router from '../../router/index'
 
 const auth = new Authenticator()
 
@@ -35,6 +36,8 @@ const mutations = {
     localStorage.removeItem('access_token')
     localStorage.removeItem('id_token')
     localStorage.removeItem('expires_at')
+    // navigate to the home route
+    router.replace('home')
   }
 }
 
@@ -50,6 +53,7 @@ const actions = {
   handleAuthentication ({ commit }) {
     auth.handleAuthentication().then(authResult => {
       commit('authenticated', authResult)
+      router.replace('expenses')
     }).catch(err => {
       console.log(err)
     })
