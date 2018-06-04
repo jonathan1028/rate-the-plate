@@ -61,7 +61,7 @@
 
 <script>
 // import { ALL_EXPENSES_QUERY, ALL_PEOPLE_QUERY, DELETE_PERSON_MUTATION } from '../../constants/graphql'
-import { ALL_EXPENSES_QUERY, UPDATE_EXPENSE_MUTATION } from '../../constants/graphql'
+import { ALL_EXPENSES_QUERY, UPDATE_EXPENSE_MUTATION } from '../../../constants/graphql'
 
 export default {
   name: 'ExpensesTable',

@@ -1,13 +1,25 @@
 
 import Vue from 'vue'
 import Router from 'vue-router'
-import Home from '@/components/Home'
-import Callback from '@/components/Callback'
-import Expenses from '../components/expenses/Expenses'
-import PublicHeader from '@/components/app/PublicHeader'
-import UserConsoleHeader from '@/components/userConsole/UserConsoleHeader'
-// import { mapGetters } from 'vuex'
 import store from '../store/index'
+
+import PublicHeader from '@/components/public/PublicHeader'
+import Home from '@/components/public/Home'
+import Callback from '@/components/public/Callback'
+
+import UserConsoleHeader from '@/components/userConsole/UserConsoleHeader'
+import Expenses from '../components/userConsole/expenses/Expenses'
+import ReadExpense from '../components/userConsole/expenses/ReadExpense'
+import UpdateExpense from '../components/userConsole/expenses/UpdateExpense'
+
+import People from '../components/userConsole/people/People'
+import ReadPerson from '../components/userConsole/people/ReadPerson'
+import UpdatePerson from '../components/userConsole/people/UpdatePerson'
+
+// import Admin from '../components/adminConsole/Admin'
+// import UpdateUser from '../components/adminConsole/UpdateUser'
+// import ReadUser from '../components/adminConsole/ReadUser'
+// import NewUsers from '../components/adminConsole/NewUsers'
 
 Vue.use(Router)
 
@@ -42,9 +54,48 @@ const router = new Router({
       path: '/',
       component: UserConsoleHeader,
       children: [
+        // ------------------------------------------ Expense ----------------------------------
         {
           path: '/expenses',
           component: Expenses,
+          meta: {
+            requiresAuth: true
+          }
+        },
+        {
+          path: '/expense/:id',
+          component: ReadExpense,
+          meta: {
+            requiresAuth: true
+          }
+        },
+        {
+          path: '/expense/update/:id',
+          component: UpdateExpense,
+          name: 'updateExpense',
+          meta: {
+            requiresAuth: true
+          }
+        },
+        //  ------------------------------------------ People ----------------------------------
+        {
+          path: '/people',
+          component: People,
+          meta: {
+            requiresAuth: true
+          }
+        },
+        {
+          path: '/person/:id',
+          component: ReadPerson,
+          meta: {
+            requiresAuth: true
+          }
+        },
+        {
+          path: '/person/update/:id',
+          component: UpdatePerson,
+          name: 'UpdatePerson',
           meta: {
             requiresAuth: true
           }
@@ -53,6 +104,7 @@ const router = new Router({
     }
   ]
 })
+// Need to add funcationality to default to a protected route if requiresAuth has not been set on a route
 router.beforeEach((to, from, next) => {
   let currentUser = store.getters.authenticated
   if (store.getters.authenticated) {
@@ -68,77 +120,6 @@ router.beforeEach((to, from, next) => {
 
 export default router
 
-// import Vue from 'vue'
-// import Router from 'vue-router'
-
-// import AppLogin from '../components/app/AppLogin'
-// import People from '../components/people/People'
-// import ReadPerson from '../components/people/ReadPerson'
-// import UpdatePerson from '../components/people/UpdatePerson'
-// import Opportunities from '../components/opportunities/Opportunities'
-// import Admin from '../components/admin/Admin'
-// import UpdateUser from '../components/admin/UpdateUser'
-// import ReadUser from '../components/admin/ReadUser'
-// import NewUsers from '../components/admin/NewUsers'
-
-// import ReadExpense from '../components/expenses/ReadExpense'
-// import UpdateExpense from '../components/expenses/UpdateExpense'
-// // import { GC_USER_ID } from '../constants/settings'
-
-// // let userId = localStorage.getItem(GC_USER_ID)
-
-// Vue.use(Router)
-
-// export default new Router({
-//   routes: [
-//     {
-//       path: '/',
-//       // redirects to the first page of the route where new posts are displayed
-//       redirect: '/people'
-//     },
-//     {
-//       path: '/login',
-//       component: AppLogin
-//     },
-//     // ------------------------------------------ People ----------------------------------
-//     {
-//       path: '/people',
-//       component: People
-//       // meta: {
-//       //   requiresAuth: true
-//       // }
-//     },
-//     {
-//       path: '/person/:id',
-//       component: ReadPerson
-//     },
-//     {
-//       path: '/person/update/:id',
-//       component: UpdatePerson,
-//       name: 'updatePerson'
-//     },
-//     // ------------------------------------------ Expense ----------------------------------
-//     {
-//       path: '/expenses',
-//       component: Expenses
-//       // meta: {
-//       //   requiresAuth: true
-//       // }
-//     },
-//     {
-//       path: '/expense/:id',
-//       component: ReadExpense
-//     },
-//     {
-//       path: '/expense/update/:id',
-//       component: UpdateExpense,
-//       name: 'updateExpense'
-//     },
-//     // ------------------------------------------ Opportunities ----------------------------------
-//     {
-//       path: '/opportunities',
-//       component: Opportunities
-//     },
 //     // ------------------------------------------ Admin ----------------------------------
 //     {
 //       path: '/admin',

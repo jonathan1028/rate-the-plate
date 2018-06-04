@@ -50,7 +50,7 @@
 </template>
 
 <script>
-import { ALL_PEOPLE_QUERY, DELETE_PERSON_MUTATION } from '../../constants/graphql'
+import { ALL_PEOPLE_QUERY, DELETE_PERSON_MUTATION } from '../../../constants/graphql'
 
 export default {
   name: 'VueTable',

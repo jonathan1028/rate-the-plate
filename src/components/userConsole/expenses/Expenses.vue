@@ -27,7 +27,7 @@
 <script>
 import CreateExpense from './CreateExpense'
 import ExpensesTable from './ExpensesTable'
-import { ALL_EXPENSES_QUERY } from '../../constants/graphql'
+import { ALL_EXPENSES_QUERY } from '../../../constants/graphql'
 import { mapGetters } from 'vuex'
 
 export default {

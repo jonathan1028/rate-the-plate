@@ -33,8 +33,8 @@ Scaffolding Notes
 </template>
 
 <script>
-import { CREATE_EXPENSE_MUTATION, ALL_EXPENSES_QUERY } from '../../constants/graphql'
-import { GC_USER_ID } from '../../constants/settings'
+import { CREATE_EXPENSE_MUTATION, ALL_EXPENSES_QUERY } from '../../../constants/graphql'
+import { GC_USER_ID } from '../../../constants/settings'
 import moment from 'moment'
 import Datepicker from 'vuejs-datepicker'
 

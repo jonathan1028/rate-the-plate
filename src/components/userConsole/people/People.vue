@@ -27,7 +27,7 @@
 <script>
 import CreatePerson from './CreatePerson'
 import VueTable from './VueTable'
-import { ALL_PEOPLE_QUERY } from '../../constants/graphql'
+import { ALL_PEOPLE_QUERY } from '../../../constants/graphql'
 // import { ALL_PEOPLE_QUERY, NEW_PEOPLE_SUBSCRIPTION } from '../constants/graphql'
 
 export default {

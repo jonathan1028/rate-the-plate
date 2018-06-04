@@ -36,11 +36,11 @@
 </template>
 
 <script>
-import { ALL_PEOPLE_QUERY, UPDATE_PERSON_MUTATION } from '../../constants/graphql'
+import { ALL_PEOPLE_QUERY, UPDATE_PERSON_MUTATION } from '../../../constants/graphql'
 // import { GC_USER_ID } from '../constants/settings'
 
 export default {
-  name: 'UpdateExpense',
+  name: 'UpdatePerson',
   data () {
     return {
       person: JSON.parse(localStorage.getItem('person'))
