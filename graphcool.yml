@@ -1,0 +1,12 @@
+types: ./types.graphql
+
+functions:
+  authenticate:
+    handler:
+      code:
+        src: ./src/auth0Authentication.js
+        environment:
+          AUTH0_DOMAIN: ${env:agilentinnovations.auth0.com'}
+          AUTH0_API_IDENTIFIER: ${env:http://127.0.0.1:8080}
+    type: resolver
+    schema: ./src/auth0Authentication.graphql

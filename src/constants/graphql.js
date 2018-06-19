@@ -12,6 +12,23 @@ export const ALL_USERS_QUERY = gql`
     }
   }
 `
+
+// export const GET_USER_QUERY = gql`
+//   query getUser($auth0UserId: String!){
+//     User(auth0UserId: $auth0UserId){
+//       id
+//     }
+//   }
+// `
+
+export const GET_USER_QUERY = gql`
+  query GetUserQuery ($auth0UserId: String!){
+    allUsers (filter: { auth0UserId: $auth0UserId }){
+      id
+    }
+  }
+`
+
 export const ALL_EXPENSES_QUERY = gql`
   query AllExpensesQuery {
     allExpenses {
@@ -92,35 +109,43 @@ export const ALL_LINKS_SEARCH_QUERY = gql`
 `
 // ----------------------------------------- Mutations ---------------------------------------------
 
+export const CREATE_USER_MUTATION = gql`
+  mutation ($idToken: String!, $name: String!, $email: String!){
+    createUser(authProvider: {auth0: {idToken: $idToken}}, name: $name, email: $email) {
+      id
+    }
+  }
+`
+
 // Two mutations defined at once!
 // the execution order is always from top to bottom.
 // CreateUser mutation will be executed before the signinUser mutation.
 // Bundling two mutations like this allows you to sign up and login in a single request!
-export const CREATE_USER_MUTATION = gql`
-  mutation CreateUserMutation($name: String!, $email: String!, $password: String!) {
-    createUser(
-      name: $name,
-      authProvider: {
-        email: {
-          email: $email,
-          password: $password
-        }
-      }
-    ) {
-      id
-    }
+// export const CREATE_USER_MUTATION = gql`
+//   mutation CreateUserMutation($name: String!, $email: String!, $password: String!) {
+//     createUser(
+//       name: $name,
+//       authProvider: {
+//         email: {
+//           email: $email,
+//           password: $password
+//         }
+//       }
+//     ) {
+//       id
+//     }
 
-    signinUser(email: {
-      email: $email,
-      password: $password
-    }) {
-      token
-      user {
-        id
-      }
-    }
-  }
-`
+//     signinUser(email: {
+//       email: $email,
+//       password: $password
+//     }) {
+//       token
+//       user {
+//         id
+//       }
+//     }
+//   }
+// `
 
 export const SIGNIN_USER_MUTATION = gql`
   mutation SigninUserMutation($email: String!, $password: String!) {

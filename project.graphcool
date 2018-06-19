@@ -1,5 +1,11 @@
 # project: cjgn20e3o4i1w0105pjn3t5p6
-# version: 4
+# version: 6
+
+type AuthenticateUserPayload @model {
+  id: ID! @isUnique
+  userId: String!
+  token: String!
+}
 
 type User @model {
   id: ID! @isUnique
@@ -12,6 +18,7 @@ type User @model {
   opportunities: [Opportunity!]! @relation(name: "UserOpportunities")
   vendors: [Vendor!]! @relation(name: "UserOnVendor")
   incomes: [Income!]! @relation(name: "UserOnIncome")
+  auth0UserId: String @isUnique
 }
 
 type File @model {

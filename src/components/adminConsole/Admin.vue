@@ -30,7 +30,14 @@ export default {
   },
   data () {
     return {
-      allUsers: [],
+      allUsers: [
+        {
+          name: 'Test1'
+        },
+        {
+          name: 'Test2'
+        }
+      ],
       sortColumn: '',
       searchQuery: '',
       columns: [

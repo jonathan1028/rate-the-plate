@@ -16,9 +16,10 @@ import People from '../components/userConsole/people/People'
 import ReadPerson from '../components/userConsole/people/ReadPerson'
 import UpdatePerson from '../components/userConsole/people/UpdatePerson'
 
-// import Admin from '../components/adminConsole/Admin'
-// import UpdateUser from '../components/adminConsole/UpdateUser'
-// import ReadUser from '../components/adminConsole/ReadUser'
+import AdminConsoleHeader from '@/components/adminConsole/AdminConsoleHeader'
+import Admin from '../components/adminConsole/Admin'
+import UpdateUser from '../components/adminConsole/UpdateUser'
+import ReadUser from '../components/adminConsole/ReadUser'
 // import NewUsers from '../components/adminConsole/NewUsers'
 
 Vue.use(Router)
@@ -26,6 +27,7 @@ Vue.use(Router)
 const router = new Router({
   mode: 'history',
   routes: [
+    // ======================================= Public Pages =============================================
     {
       path: '/',
       component: PublicHeader,
@@ -50,6 +52,8 @@ const router = new Router({
       path: '*',
       redirect: '/home'
     },
+    // ======================================= User Console Pages =============================================
+
     {
       path: '/',
       component: UserConsoleHeader,
@@ -96,6 +100,36 @@ const router = new Router({
           path: '/person/update/:id',
           component: UpdatePerson,
           name: 'UpdatePerson',
+          meta: {
+            requiresAuth: true
+          }
+        }
+      ]
+    },
+    // ======================================= Admin Console Pages =============================================
+    {
+      path: '/',
+      component: AdminConsoleHeader,
+      children: [
+        // ------------------------------------------ Expense ----------------------------------
+        {
+          path: '/admin',
+          component: Admin,
+          meta: {
+            requiresAuth: true
+          }
+        },
+        {
+          path: '/user/update/:id',
+          component: UpdateUser,
+          name: 'UpdateUser',
+          meta: {
+            requiresAuth: true
+          }
+        },
+        {
+          path: '/user/:id',
+          component: ReadUser,
           meta: {
             requiresAuth: true
           }

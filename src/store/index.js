@@ -1,12 +1,19 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import session from './modules/session'
+import auth from './modules/auth'
+import VuexPersistence from 'vuex-persist'
 
 Vue.use(Vuex)
 
+// This will cause the entire auth module to persist through page refreshes
+const vuexLocal = new VuexPersistence({
+  storage: window.localStorage,
+  modules: ['auth']
+})
+
 const store = new Vuex.Store({
   modules: {
-    session
+    auth
   },
   state: {
     authInstance: false,
@@ -33,7 +40,8 @@ const store = new Vuex.Store({
     toggleAuthentication (state) {
       state.isAuthenticated = !state.isAuthenticated
     }
-  }
+  },
+  plugins: [vuexLocal.plugin]
 })
 
 export default store

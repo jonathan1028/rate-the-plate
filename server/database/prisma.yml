@@ -1,0 +1,12 @@
+service: test
+stage: dev
+
+datamodel: datamodel.graphql
+
+# to enable auth, provide
+secret: ${env:PRISMA_SECRET}
+#disableAuth: true
+#cluster: jonathan-75b87e/prisma-us1
+#endpoint: https://us1.prisma.sh/jonathan-75b87e/hello-world/dev
+cluster: jonathan-75b87e/prisma-us1
+#https://us1.prisma.sh

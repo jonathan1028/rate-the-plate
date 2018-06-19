@@ -6,9 +6,18 @@
           <div class="logo">Penny Pincher</div>
           <!-- Main navigation -->
           <div class="nav-buttons">
-            <router-link to="/admin">About</router-link>
+            <!-- Logged in navigation -->
+            <!-- <div class="authenticated-nav" v-if="userId">
+              <router-link to="/expenses">Expenses</router-link>
+              <div>|</div>
+              <router-link to="/people">People</router-link>
+              <div>|</div>
+              <router-link to="/opportunities">Opportunities</router-link>
+              <div>|</div>
+            </div> -->
+            <router-link to="/admin">Admin Panel</router-link>
             <div>|</div>
-            <router-link to="/newusers">Contact</router-link>
+            <router-link to="/newusers">New User Accounts</router-link>
           </div>
         </div>
         <!-- Login buttons   -->
@@ -30,18 +39,10 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
-// import { auth } from '../../apollo-client'
 
 export default {
-  name: 'PublicHeader',
-  data () {
-    return {
-
-    }
-  },
-  computed: {
-    ...mapGetters(['authenticated'])
-  },
+  name: 'UserConsoleHeader',
+  computed: mapGetters(['authenticated']),
   methods: mapActions(['login', 'logout'])
 }
 </script>

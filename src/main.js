@@ -8,7 +8,6 @@ import store from './store/index'
 import moment from 'moment'
 
 let userId = localStorage.getItem(GC_USER_ID)
-// let isAuthenticated = localStorage.getItem('isAuthenticated')
 
 Vue.use(Vuex)
 

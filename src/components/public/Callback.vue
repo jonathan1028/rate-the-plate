@@ -9,12 +9,13 @@ import { mapActions } from 'vuex'
 
 export default {
   name: 'Callback',
-  methods: mapActions(['handleAuthentication']),
 
   data () {
     this.handleAuthentication()
-    return {}
-  }
+    return {
+    }
+  },
+  methods: mapActions(['handleAuthentication'])
 }
 </script>
 

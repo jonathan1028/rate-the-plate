@@ -1,12 +1,14 @@
 <template>
   <div>
     <h1>User is Authenticated: {{authenticated}}</h1>
+    <h1>User ID is: {{userId}}</h1>
     <span v-if="this.$store.state.showCreateExpense">
       <create-expense :data="{columns, options}"></create-expense>
     </span>
     <div class="box effect6">
       <div class="box-content">
         <h1>Expenses</h1>
+        <button @click="test()">Test</button>
         <!-- <new-expenses-table></new-expenses-table> -->
         <button
           @click="openCreate()"
@@ -29,15 +31,23 @@ import CreateExpense from './CreateExpense'
 import ExpensesTable from './ExpensesTable'
 import { ALL_EXPENSES_QUERY } from '../../../constants/graphql'
 import { mapGetters } from 'vuex'
+import decode from 'jwt-decode'
+// import { GC_USER_ID } from '../../../constants/settings'
 
 export default {
   name: 'Expenses',
   components: {
     CreateExpense, ExpensesTable
   },
-  computed: mapGetters(['authenticated']),
+  computed: {
+    ...mapGetters(['authenticated', 'userId'])
+    // userId () {
+    //   return localStorage.getItem(GC_USER_ID)
+    // }
+  },
   data () {
     return {
+      // userId: localStorage.getItem(GC_USER_ID),
       showCreateExpense: this.$store.showCreateExpense,
       allExpenses: [],
       sortColumn: '',
@@ -84,6 +94,14 @@ export default {
       if (this.authenticated) {
         console.log('User Authenticated')
       }
+    },
+    test () {
+      const accessToken = localStorage.getItem('access_token')
+      console.log('Test', accessToken)
+      const idObject = decode(localStorage.getItem('id_token'))
+      const idToken = localStorage.getItem('id_token')
+      console.log('ID OBJECT', idObject)
+      console.log('ID TOKEN', idToken)
     }
   },
   apollo: {
