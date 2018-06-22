@@ -30,15 +30,27 @@
           :key='index'
           :index="index"
         >
+          <datepicker
+            v-if="col.dbField === 'date'"
+            placeholder="Select Date"
+            v-model="clonedData[rowIndex][col.dbField]"
+          ></datepicker>
+
         <!-- @click="setTarget(rowIndex, col.dbField)" -->
           <!-- <div>{{ row[col.dbField] }}</div> -->
         <!-- @click="viewPerson(row)" -->
           <input
+            v-if="col.dbField !== 'date'"
             v-model="clonedData[rowIndex][col.dbField]"
             type="text"
             name="cell"
             @change="update(clonedData[rowIndex][col.dbField], col.dbField, clonedData[rowIndex])"
           >
+          <span
+            v-if="col.dbField === 'ownedBy'"
+          >
+            {{getName(clonedData[rowIndex][col.dbField])}}
+          </span>
           <!-- <div v-if="isOwner(col.dbField)">
             {{getName(row[col.dbField])}}
           </div>
@@ -62,9 +74,12 @@
 <script>
 // import { ALL_EXPENSES_QUERY, ALL_PEOPLE_QUERY, DELETE_PERSON_MUTATION } from '../../constants/graphql'
 import { ALL_EXPENSES_QUERY, UPDATE_EXPENSE_MUTATION } from '../../../constants/graphql'
+import Datepicker from 'vuejs-datepicker'
+import { GC_USER_ID } from '../../../constants/settings'
 
 export default {
   name: 'ExpensesTable',
+  components: { Datepicker },
   // props: {
   //   filterKey: String
   //   // amount: 0,
@@ -73,6 +88,7 @@ export default {
   // },
   data: function () {
     return {
+      date: '',
       allExpenses: [],
       clonedData: [],
       testData: [
@@ -82,7 +98,8 @@ export default {
       columns: [
         {dbField: 'date', title: 'date'},
         {dbField: 'amount', title: 'amount'},
-        {dbField: 'description', title: 'description'}
+        {dbField: 'description', title: 'description'},
+        {dbField: 'ownedBy', title: 'description'}
       ]
       // sortOrders: {},
       // sortKey: '',
@@ -128,13 +145,15 @@ export default {
     // const expenses = []
     // let clonedData = []
     // this.bindedData = Object.assign({}, this.allExpenses)
-    console.log('Expenses', this.allExpenses)
+
+    // Data from Apollo is read only so it must be cloned in order for it to become editable
+    // console.log('Expenses', this.allExpenses)
     this.$watch('allExpenses', function () {
-      console.log(JSON.stringify(this.allExpenses))
+      // console.log(JSON.stringify(this.allExpenses))
       this.clonedData = JSON.parse(JSON.stringify(this.allExpenses))
       // this.clonedData = this.allExpenses.slice(0)
-      console.log('Clone', this.clonedData)
-      console.log('Test', this.testData)
+      // console.log('Clone', this.clonedData)
+      // console.log('Test', this.testData)
     }, {deep: true})
     //   expenses = Object.assign({}, this.allExpenses)
     // apollo.watchQuery<any>({
@@ -147,6 +166,14 @@ export default {
     // }).subscribe((result) => Object.assign(this.bindedData.description, result.data.description))
   },
   methods: {
+    getName: function (owner) {
+      console.log(owner)
+      // if (owner.id) {
+      //   return owner.id
+      // } else {
+      //   return ''
+      // }
+    },
     // setSelection: function (id, event) {
     //   console.log('Set Selection', id)
 
@@ -196,15 +223,21 @@ export default {
     update (value, field, expense) {
       console.log('Test')
       let amount = 0
+      let date = ''
       if (field === 'amount') {
         amount = parseFloat(value)
       }
-      console.log('Amount', value)
+      if (field === 'date') {
+        date = value
+        console.log('Date', date)
+      }
+      // console.log('Amount', value)
       this.$apollo.mutate({
         mutation: UPDATE_EXPENSE_MUTATION,
         variables: {
           id: expense.id,
-          amount: amount
+          amount: amount,
+          date: date
         }
         // update: (store, { data: { updateExpense } }) => {
         //   // Get data from store
@@ -253,7 +286,10 @@ export default {
   apollo: {
     // allObjects here pulls the data from ALL_OBJECTS_QUERY and assigns it to the data(){} object at the top of script
     allExpenses: {
-      query: ALL_EXPENSES_QUERY
+      query: ALL_EXPENSES_QUERY,
+      variables: {
+        userId: localStorage.getItem(GC_USER_ID)
+      }
     }
   }
 }

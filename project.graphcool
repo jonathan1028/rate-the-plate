@@ -1,5 +1,5 @@
 # project: cjgn20e3o4i1w0105pjn3t5p6
-# version: 6
+# version: 7
 
 type AuthenticateUserPayload @model {
   id: ID! @isUnique
@@ -15,6 +15,7 @@ type User @model {
   password: String
   name: String
   persons: [Person!]! @relation(name: "UsersPersons")
+  expenses: [Expense!]! @relation(name: "UsersExpenses")
   opportunities: [Opportunity!]! @relation(name: "UserOpportunities")
   vendors: [Vendor!]! @relation(name: "UserOnVendor")
   incomes: [Income!]! @relation(name: "UserOnIncome")
@@ -74,6 +75,7 @@ type Expense @model {
   description: String
   date: DateTime!
   vendor: Vendor @relation(name: "VendorOnExpense")
+  ownedBy: User @relation(name: "UsersExpenses")
 }
 
 type Income @model {

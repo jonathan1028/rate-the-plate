@@ -76,17 +76,24 @@ export default {
         variables: {
           date,
           description: description,
-          amount: amount
-          // ownedById: currentUser
+          amount: amount,
+          ownedById: currentUser
         },
         // CreateExpense must return the exact same shape of data that All_EXPENSES_QUERY diplays
         update: (store, { data: { createExpense } }) => {
           // Pull data from the stored query
-          const data = store.readQuery({ query: ALL_EXPENSES_QUERY })
+          const data = store.readQuery({
+            query: ALL_EXPENSES_QUERY,
+            variables: { userId: localStorage.getItem(GC_USER_ID) }
+          })
           // We add the new data
           data.allExpenses.push(createExpense)
           // We update the cache
-          store.writeQuery({ query: ALL_EXPENSES_QUERY, data: data })
+          store.writeQuery({
+            query: ALL_EXPENSES_QUERY,
+            variables: { userId: localStorage.getItem(GC_USER_ID) },
+            data: data
+          })
         }
       }).catch((error) => {
         console.error(error)

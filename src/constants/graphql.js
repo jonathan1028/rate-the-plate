@@ -30,12 +30,15 @@ export const GET_USER_QUERY = gql`
 `
 
 export const ALL_EXPENSES_QUERY = gql`
-  query AllExpensesQuery {
-    allExpenses {
+  query AllExpensesQuery ($userId: ID!){
+    allExpenses (filter: { ownedBy: { id: $userId }}){
       id
       date
       description
       amount
+      ownedBy{
+        id
+      }
     }
   }
 `
@@ -162,16 +165,20 @@ export const SIGNIN_USER_MUTATION = gql`
 `
 
 export const CREATE_EXPENSE_MUTATION = gql`
-  mutation CreateExpenseMutation($date: DateTime!, $amount: Float, $description: String) {
+  mutation CreateExpenseMutation($date: DateTime!, $amount: Float, $description: String, $ownedById: ID!) {
     createExpense(
       date: $date
       description: $description
-      amount: $amount
+      amount: $amount,
+      ownedById: $ownedById
     ) {
       id
       date
       description
       amount
+      ownedBy {
+        id
+      }
     }
   }
 `
@@ -233,10 +240,11 @@ export const UPDATE_USER_MUTATION = gql`
 `
 
 export const UPDATE_EXPENSE_MUTATION = gql`
-  mutation UpdateExpenseMutation($id: ID!, $amount: Float) {
+  mutation UpdateExpenseMutation($id: ID!, $amount: Float, $date: DateTime) {
     updateExpense(
       id: $id,
-      amount: $amount
+      amount: $amount,
+      date: $date
     ) {
       id
     }
