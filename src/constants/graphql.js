@@ -25,13 +25,14 @@ export const GET_USER_QUERY = gql`
   query GetUserQuery ($auth0UserId: String!){
     allUsers (filter: { auth0UserId: $auth0UserId }){
       id
+      email
     }
   }
 `
 
 export const ALL_EXPENSES_QUERY = gql`
   query AllExpensesQuery ($userId: ID!){
-    allExpenses (filter: { ownedBy: { id: $userId }}){
+    allExpenses (filter: {ownedBy: {id: $userId} }){
       id
       date
       description
@@ -176,7 +177,7 @@ export const CREATE_EXPENSE_MUTATION = gql`
       date
       description
       amount
-      ownedBy {
+      ownedBy{
         id
       }
     }

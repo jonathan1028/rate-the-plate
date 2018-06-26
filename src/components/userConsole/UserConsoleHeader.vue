@@ -21,17 +21,22 @@
           </div>
         </div>
         <!-- Login buttons   -->
-        <button
-          v-if="!authenticated"
-          @click="login()">
-            Log In
-        </button>
+        <div>
+          <div>
+            {{user.email}}
+          </div>
+          <button
+            v-if="!authenticated"
+            @click="login()">
+              Log In
+          </button>
 
-        <button
-          v-if="authenticated"
-          @click="logout()">
-            Log Out
-        </button>
+          <button
+            v-if="authenticated"
+            @click="logout()">
+              Log Out
+          </button>
+        </div>
     </div>
     <router-view></router-view>
   </div>
@@ -42,7 +47,13 @@ import { mapActions, mapGetters } from 'vuex'
 
 export default {
   name: 'UserConsoleHeader',
-  computed: mapGetters(['authenticated']),
+  data () {
+    console.log('user', localStorage.getItem('user'))
+    return {
+      user: JSON.parse(localStorage.getItem('user'))
+    }
+  },
+  computed: mapGetters(['authenticated', 'userId']),
   methods: mapActions(['login', 'logout'])
 }
 </script>

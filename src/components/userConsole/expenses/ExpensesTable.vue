@@ -76,6 +76,7 @@
 import { ALL_EXPENSES_QUERY, UPDATE_EXPENSE_MUTATION } from '../../../constants/graphql'
 import Datepicker from 'vuejs-datepicker'
 import { GC_USER_ID } from '../../../constants/settings'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'ExpensesTable',
@@ -107,6 +108,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['authenticated', 'userId'])
     // sortOrders: function () {
     //   this.fields.forEach(function (key) {
     //   this.sortOrders[key] = 1
@@ -142,6 +144,7 @@ export default {
     }
   },
   mounted () {
+    console.log('UserId', this.userId)
     // const expenses = []
     // let clonedData = []
     // this.bindedData = Object.assign({}, this.allExpenses)

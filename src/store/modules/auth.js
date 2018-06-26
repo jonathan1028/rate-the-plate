@@ -36,6 +36,9 @@ const mutations = {
     localStorage.setItem('expires_at', state.expiresAt)
     // Decodes entire idToken and pulls out the userId portion
     state.auth0UserId = jwt.decode(state.idToken).sub
+    state.email = jwt.decode(state.idToken).email
+    console.log('Email', state.email)
+    console.log('idToken', jwt.decode(state.idToken))
     localStorage.setItem('auth0UserId', state.auth0UserId)
     console.log('auth0UserId', localStorage.getItem('auth0UserId'))
     // Checks to see if the auth0 user has been created in the GraphCool db yet
@@ -99,6 +102,9 @@ const actions = {
           commit('userId', userId)
           console.log('UserId', userId)
           localStorage.setItem(GC_USER_ID, userId)
+          console.log('Stringify', JSON.stringify(result.data.allUsers[0]))
+          localStorage.setItem('user', JSON.stringify(result.data.allUsers[0]))
+          console.log('Full User Object', JSON.parse(localStorage.getItem('user')))
           return userId
         }
       }).then(async userId => {
@@ -116,8 +122,8 @@ const actions = {
         router.replace('expenses')
       })
   },
-
-  createUser ({dispatch, commit}, authResult) {
+  // Creates user in graphCool
+  createUser ({dispatch, commit, state}, authResult) {
     console.log('Create user run')
     apolloClient
       .mutate({
@@ -125,7 +131,7 @@ const actions = {
         variables: {
           idToken: authResult.idToken,
           name: '',
-          email: authResult.idToken
+          email: state.email
         }
       }).then((result) => {
         // Collects the graphcool user id that corresponds to the auth0UserId
@@ -134,6 +140,7 @@ const actions = {
         commit('userId', userId)
         console.log('User created!', userId)
         localStorage.setItem(GC_USER_ID, userId)
+        localStorage.setItem('user', JSON.stringify(result.data.createUser))
         return userId
       }).catch((error) => {
         console.error(error)

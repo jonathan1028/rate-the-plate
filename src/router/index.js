@@ -6,6 +6,8 @@ import store from '../store/index'
 import PublicHeader from '@/components/public/PublicHeader'
 import Home from '@/components/public/Home'
 import Callback from '@/components/public/Callback'
+import SignUp from '@/components/public/SignUp'
+import VolunteerPost from '@/components/public/VolunteerPost'
 
 import UserConsoleHeader from '@/components/userConsole/UserConsoleHeader'
 import Expenses from '../components/userConsole/expenses/Expenses'
@@ -39,12 +41,22 @@ const router = new Router({
         },
         {
           path: '/',
-          redirect: '/home'
+          redirect: '/expenses'
         },
         {
           path: '/callback',
           name: 'Callback',
           component: Callback
+        },
+        {
+          path: '/signup',
+          name: 'SignUp',
+          component: SignUp
+        },
+        {
+          path: '/volunteerpost',
+          name: 'VolunteerPost',
+          component: VolunteerPost
         }
       ]
     },
