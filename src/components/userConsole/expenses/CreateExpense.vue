@@ -34,8 +34,7 @@ Scaffolding Notes
 
 <script>
 import { CREATE_EXPENSE_MUTATION, ALL_EXPENSES_QUERY } from '../../../constants/graphql'
-import { GC_USER_ID } from '../../../constants/settings'
-import moment from 'moment'
+// import { GC_USER_ID } from '../../../constants/settings'
 import Datepicker from 'vuejs-datepicker'
 
 export default {
@@ -43,6 +42,7 @@ export default {
   components: { Datepicker },
   data () {
     return {
+      userId: this.$store.state.auth.userId,
       date: '',
       description: '',
       amount: 0
@@ -53,45 +53,32 @@ export default {
       this.$store.commit('toggleCreateExpense')
     },
     create () {
-      // Checks permissions
-      const currentUser = localStorage.getItem(GC_USER_ID)
-      if (!currentUser) {
-        console.error('No user logged in')
-        return
-      }
-      console.log('User', currentUser)
+      console.log('UserId', this.userId)
 
       // Assign data from form inputs
-      const date = moment(this.date).toDate()
       const description = this.description
       const amount = parseFloat(this.amount)
-
-      // Clears out data
-      this.date = ''
-      this.description = ''
-      this.amount = ''
 
       this.$apollo.mutate({
         mutation: CREATE_EXPENSE_MUTATION,
         variables: {
-          date,
+          ownedById: this.userId,
           description: description,
           amount: amount,
-          ownedById: currentUser
+          date: this.date
         },
-        // CreateExpense must return the exact same shape of data that All_EXPENSES_QUERY diplays
         update: (store, { data: { createExpense } }) => {
           // Pull data from the stored query
           const data = store.readQuery({
             query: ALL_EXPENSES_QUERY,
-            variables: { userId: localStorage.getItem(GC_USER_ID) }
+            variables: { userId: this.userId }
           })
           // We add the new data
           data.allExpenses.push(createExpense)
           // We update the cache
           store.writeQuery({
             query: ALL_EXPENSES_QUERY,
-            variables: { userId: localStorage.getItem(GC_USER_ID) },
+            variables: { userId: this.userId },
             data: data
           })
         }

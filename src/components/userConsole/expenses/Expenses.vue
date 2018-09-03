@@ -1,7 +1,5 @@
 <template>
   <div>
-    <h1>User is Authenticated: {{authenticated}}</h1>
-    <h1>User ID is: {{userId}}</h1>
     <span v-if="this.$store.state.showCreateExpense">
       <create-expense></create-expense>
     </span>

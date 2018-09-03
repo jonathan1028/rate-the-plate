@@ -1,5 +1,5 @@
 # project: cjgn20e3o4i1w0105pjn3t5p6
-# version: 7
+# version: 10
 
 type AuthenticateUserPayload @model {
   id: ID! @isUnique
@@ -73,7 +73,7 @@ type Expense @model {
   amount: Float
   category: String
   description: String
-  date: DateTime!
+  date: DateTime
   vendor: Vendor @relation(name: "VendorOnExpense")
   ownedBy: User @relation(name: "UsersExpenses")
 }
@@ -97,5 +97,5 @@ type Vendor @model {
   name: String
   income: Income @relation(name: "VendorOnIncome")
   expense: Expense @relation(name: "VendorOnExpense")
-  ownedBy: User! @relation(name: "UserOnVendor")
+  ownedBy: User @relation(name: "UserOnVendor")
 }

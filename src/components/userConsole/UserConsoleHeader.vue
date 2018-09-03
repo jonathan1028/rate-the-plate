@@ -15,9 +15,13 @@
               <router-link to="/opportunities">Opportunities</router-link>
               <div>|</div>
             </div> -->
+            <router-link to="/expenses">Expenses</router-link>
+            <div>|</div>
+            <router-link to="/vendors">Vendors</router-link>
+            <!-- <div>|</div>
             <router-link to="/admin">Admin Panel</router-link>
             <div>|</div>
-            <router-link to="/newusers">New User Accounts</router-link>
+            <router-link to="/newusers">New User Accounts</router-link> -->
           </div>
         </div>
         <!-- Login buttons   -->

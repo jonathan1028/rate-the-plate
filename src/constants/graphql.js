@@ -1,5 +1,74 @@
 import gql from 'graphql-tag'
 
+// ----------------------------------------- Expenses ---------------------------------------------
+export const ALL_EXPENSES_QUERY = gql`
+  query AllExpensesQuery ($userId: ID!){
+    allExpenses (filter: {ownedBy: {id: $userId}}){
+      id
+      date
+      description
+      amount
+      ownedBy{
+        id
+      }
+    }
+  }
+`
+
+export const CREATE_EXPENSE_MUTATION = gql`
+  mutation CreateExpenseMutation($ownedById: ID!, $date: DateTime, $amount: Float, $description: String) {
+    createExpense(
+      ownedById: $ownedById
+      date: $date
+      description: $description
+      amount: $amount
+    ) {
+      id
+      date
+      description
+      amount
+      ownedBy {
+        id
+      }
+    }
+  }
+`
+
+export const UPDATE_EXPENSE_MUTATION = gql`
+  mutation UpdateExpenseMutation($id: ID!, $amount: Float, $date: DateTime, $description: String) {
+    updateExpense(
+      id: $id,
+      date: $date
+      amount: $amount,
+      description: $description
+    ) {
+      id
+    }
+  }
+`
+// ----------------------------------------- Vendors ---------------------------------------------
+export const ALL_VENDORS_QUERY = gql`
+  query AllVendorsQuery {
+    allVendors {
+      id
+      name
+      ownedBy{
+        id
+      }
+    }
+  }
+`
+
+export const CREATE_VENDOR_MUTATION = gql`
+  mutation CreateVendorMutation($ownedById: ID, $name: String) {
+    createVendor(
+      name: $name
+    ) {
+      id
+    }
+  }
+`
+
 // ----------------------------------------- Queries ---------------------------------------------
 export const ALL_USERS_QUERY = gql`
   query AllUsersQuery {
@@ -13,14 +82,6 @@ export const ALL_USERS_QUERY = gql`
   }
 `
 
-// export const GET_USER_QUERY = gql`
-//   query getUser($auth0UserId: String!){
-//     User(auth0UserId: $auth0UserId){
-//       id
-//     }
-//   }
-// `
-
 export const GET_USER_QUERY = gql`
   query GetUserQuery ($auth0UserId: String!){
     allUsers (filter: { auth0UserId: $auth0UserId }){
@@ -30,87 +91,6 @@ export const GET_USER_QUERY = gql`
   }
 `
 
-export const ALL_EXPENSES_QUERY = gql`
-  query AllExpensesQuery ($userId: ID!){
-    allExpenses (filter: {ownedBy: {id: $userId} }){
-      id
-      date
-      description
-      amount
-      ownedBy{
-        id
-      }
-    }
-  }
-`
-
-export const ALL_PEOPLE_QUERY = gql`
-  query AllPersonsQuery {
-    allPersons {
-      id
-      createdAt
-      displayName
-      firstName
-      lastName
-      phone1
-      email
-      ownedBy {
-        id
-        name
-      }
-    }
-  }
-`
-
-export const ALL_OPPORTUNITIES_QUERY = gql`
-  query AllOpportunitiesQuery {
-    allOpportunities {
-      id
-      jobName
-      stage
-      status
-      amount
-      source
-      estimatedCloseDate
-      probability
-      ownedBy {
-        id
-        name
-      }
-      contacts {
-        id
-        displayName
-      }
-    }
-  }
-`
-
-export const ALL_LINKS_SEARCH_QUERY = gql`
-  query AllLinksSearchQuery($searchText: String!) {
-    allLinks(filter: {
-      OR: [{
-        url_contains: $searchText
-      }, {
-        description_contains: $searchText
-      }]
-    }) {
-      id
-      url
-      description
-      createdAt
-      postedBy {
-        id
-        name
-      }
-      votes {
-        id
-        user {
-          id
-        }
-      }
-    }
-  }
-`
 // ----------------------------------------- Mutations ---------------------------------------------
 
 export const CREATE_USER_MUTATION = gql`
@@ -165,69 +145,6 @@ export const SIGNIN_USER_MUTATION = gql`
   }
 `
 
-export const CREATE_EXPENSE_MUTATION = gql`
-  mutation CreateExpenseMutation($date: DateTime!, $amount: Float, $description: String, $ownedById: ID!) {
-    createExpense(
-      date: $date
-      description: $description
-      amount: $amount,
-      ownedById: $ownedById
-    ) {
-      id
-      date
-      description
-      amount
-      ownedBy{
-        id
-      }
-    }
-  }
-`
-
-export const CREATE_PERSON_MUTATION = gql`
-  mutation CreatePersonMutation($displayName: String!, $firstName: String, $lastName: String, 
-    $phone1: String, $email: String, $ownedById: ID!) {
-    createPerson(
-      displayName: $displayName,
-      firstName: $firstName,
-      lastName: $lastName,
-      phone1: $phone1,
-      email: $email,
-      ownedById: $ownedById
-    ) {
-      id
-      createdAt
-      displayName 
-      firstName
-      lastName
-      phone1
-      email
-      ownedBy {
-        id
-        name
-      }
-    }
-  }
-`
-
-export const CREATE_OPPORTUNITY_MUTATION = gql`
-  mutation CreateOpportunityMutation($jobName: String, $ownedById: ID!, $source: String, $contacts: [ID!], $stage: String, $status: String,
-  $amount: Float, $probability: Int) {
-    createOpportunity(
-      jobName: $jobName
-      contactsIds: $contacts
-      ownedById: $ownedById
-      source: $source
-      stage: $stage
-      status: $status
-      amount: $amount
-      probability: $probability
-    ) {
-      id
-    }
-  }
-`
-
 export const UPDATE_USER_MUTATION = gql`
   mutation UpdateUserMutation($id: ID!,  $name: String) {
     updateUser(
@@ -240,90 +157,12 @@ export const UPDATE_USER_MUTATION = gql`
   }
 `
 
-export const UPDATE_EXPENSE_MUTATION = gql`
-  mutation UpdateExpenseMutation($id: ID!, $amount: Float, $date: DateTime) {
-    updateExpense(
-      id: $id,
-      amount: $amount,
-      date: $date
-    ) {
-      id
-    }
-  }
-`
-
-export const UPDATE_PERSON_MUTATION = gql`
-  mutation UpdatePersonMutation($id: ID!, $displayName: String!, $firstName: String, 
-  $lastName: String, $phone1: String, $email: String) {
-    updatePerson(
-      id: $id,
-      displayName: $displayName,
-      firstName: $firstName,
-      lastName: $lastName,
-      phone1: $phone1, 
-      email: $email
-    ) {
-      id
-      displayName
-    }
-  }
-`
-
 export const DELETE_USER_MUTATION = gql`
   mutation DeleteUserMutation($id: ID!) {
     deleteUser(
       id: $id,
     ) {
       id
-    }
-  }
-`
-
-export const DELETE_PERSON_MUTATION = gql`
-  mutation DeletePersonMutation($id: ID!) {
-    deletePerson(
-      id: $id,
-    ) {
-      id
-    }
-  }
-`
-
-export const CREATE_LINK_MUTATION = gql`
-  mutation CreateLinkMutation($description: String!, $url: String!, $postedById: ID!) {
-    createLink(
-      description: $description,
-      url: $url,
-      postedById: $postedById
-    ) {
-      id
-      createdAt
-      url
-      description
-      postedBy {
-        id
-        name
-      }
-    }
-  }
-`
-
-export const CREATE_VOTE_MUTATION = gql`
-  mutation CreateVoteMutation($userId: ID!, $linkId: ID!) {
-    createVote(userId: $userId, linkId: $linkId) {
-      id
-      link {
-        id
-        votes {
-          id
-          user {
-            id
-          }
-        }
-      }
-      user {
-        id
-      }
     }
   }
 `

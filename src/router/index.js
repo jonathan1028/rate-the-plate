@@ -13,10 +13,7 @@ import UserConsoleHeader from '@/components/userConsole/UserConsoleHeader'
 import Expenses from '../components/userConsole/expenses/Expenses'
 import ReadExpense from '../components/userConsole/expenses/ReadExpense'
 import UpdateExpense from '../components/userConsole/expenses/UpdateExpense'
-
-import People from '../components/userConsole/people/People'
-import ReadPerson from '../components/userConsole/people/ReadPerson'
-import UpdatePerson from '../components/userConsole/people/UpdatePerson'
+import VendorsPage from '../components/userConsole/pages/VendorsPage'
 
 import AdminConsoleHeader from '@/components/adminConsole/AdminConsoleHeader'
 import Admin from '../components/adminConsole/Admin'
@@ -93,25 +90,9 @@ const router = new Router({
             requiresAuth: true
           }
         },
-        //  ------------------------------------------ People ----------------------------------
         {
-          path: '/people',
-          component: People,
-          meta: {
-            requiresAuth: true
-          }
-        },
-        {
-          path: '/person/:id',
-          component: ReadPerson,
-          meta: {
-            requiresAuth: true
-          }
-        },
-        {
-          path: '/person/update/:id',
-          component: UpdatePerson,
-          name: 'UpdatePerson',
+          path: '/vendors',
+          component: VendorsPage,
           meta: {
             requiresAuth: true
           }

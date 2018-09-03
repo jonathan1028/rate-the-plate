@@ -1,59 +1,68 @@
 <template>
-  <table>
-    <thead>
-      <tr>
-        <th
-          v-for='(item, index) in columns'
-          :key='index'
-          :index="index"
-          @click="sortBy(item.dbField)"
-          :class="{ active: sortKey == item.dbField }">
-          {{ item.title | capitalize }}
-          <span class="arrow" :class="sortOrders[item.dbField] > 0 ? 'asc' : 'dsc'">
-          </span>
-        </th>
-        <th>
-          Links
-        </th>
-      </tr>
+  <div class="component">
+    <table>
+      <thead>
+        <tr>
+          <th
+            v-for='(item, index) in columns'
+            :key='index'
+            :index="index"
+            @click="sortBy(item.dbField)"
+            :class="{ active: sortKey == item.dbField }">
+            {{ item.title | capitalize }}
+            <span class="arrow" :class="sortOrders[item.dbField] > 0 ? 'asc' : 'dsc'">
+            </span>
+          </th>
+          <th>
+            Links
+          </th>
+        </tr>
 
-    </thead>
-    <tbody>
-      <tr
-        v-for='(entry, index) in filteredData'
-        :key='index'
-        :index="index"
-      >
-        <td v-for='(col, index) in columns'
+      </thead>
+      <tbody>
+        <tr
+          v-for='(row, index) in filteredData'
           :key='index'
           :index="index"
-          @click="viewPerson(entry)"
         >
-        <div v-if="isOwner(col.dbField)">
-          {{getName(entry[col.dbField])}}
-        </div>
-         <div v-else>
-          {{entry[col.dbField]}}
-        </div>
-        </td>
-        <td>
-          <button
-            @click="updatePerson(entry)"
-          >Edit</button>
-          <button
-            @click="deletePerson(entry)"
-          >Delete</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+          <td v-for='(col, index) in columns'
+            :key='index'
+            :index="index"
+            @click="view(row)"
+          >
+          <div v-if="col.dbField === 'createdAt'">
+            <span>{{row[col.dbField] | formatDate}}</span>
+          </div>
+          <div v-else-if="col.dbField === 'updatedAt'">
+            <span>{{row[col.dbField] | relativeTime}}</span>
+          </div>
+          <div v-else-if="col.dbField === 'ownedBy'">
+            <span>{{ getName(row[col.dbField]) }}</span>
+          </div>
+          <div v-else>
+            {{row[col.dbField]}}
+          </div>
+          </td>
+          <td>
+            <button
+              @click="update(row)"
+            >Edit</button>
+            <button
+              @click="deleteObject(row)"
+            >Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+  </div>
 </template>
 
 <script>
-import { ALL_PEOPLE_QUERY, DELETE_PERSON_MUTATION } from '../../../constants/graphql'
-
+import { ALL_USERS_QUERY, DELETE_USER_MUTATION } from '../../../constants/graphql'
+import { GC_USER_ID } from '../../../constants/settings'
 export default {
-  name: 'VueTable',
+  name: 'UserTable',
   props: {
     data: Array,
     columns: Array,
@@ -99,65 +108,69 @@ export default {
     }
   },
   methods: {
-    isOwner: function (field) {
-      if (field === 'ownedBy') {
+    getName (owner) {
+      return owner.firstName + ' ' + owner.lastName
+    },
+    isCreatedAt: function (field) {
+      if (field === 'createdAt') {
         return true
       } else {
         return false
       }
     },
-    getName: function (owner) {
-      if (owner && owner.name) {
-        return owner.name
+    isUpdatedAt: function (field) {
+      if (field === 'updatedAt') {
+        return true
       } else {
-        return ''
+        return false
       }
     },
     sortBy: function (key) {
       this.sortKey = key
       this.sortOrders[key] = this.sortOrders[key] * -1
     },
-    viewPerson: function (person) {
-      localStorage.setItem('person', JSON.stringify(person))
-      this.$router.push({path: `/person/${person.id}`})
+    view: function (obj) {
+      // Creates a dynamic path and stores to localStorage regardless of what type of object is passed in
+      let path = '/admin/' + obj.__typename.toLowerCase() + '/' + obj.id
+      localStorage.setItem(obj.__typename.toLowerCase(), JSON.stringify(obj))
+      this.$router.push({path: path})
     },
-    updatePerson (person) {
-      localStorage.setItem('person', JSON.stringify(person))
-      console.log('test1', JSON.parse(localStorage.getItem('person')))
-      this.$router.push({path: `/person/update/${person.id}`})
+    update (user) {
+      localStorage.setItem('user', JSON.stringify(user))
+      console.log('test1', JSON.parse(localStorage.getItem('user')))
+      this.$router.push({path: `/user/update/${user.id}`})
     },
-    deletePerson (person) {
-      this.$apollo.mutate({
-        mutation: DELETE_PERSON_MUTATION,
-        variables: {
-          id: person.id
-        },
-        update: (store, { data: { deletePerson } }) => {
-          // Read the data from our cache for this query.
-          const data = store.readQuery({ query: ALL_PEOPLE_QUERY })
-          // Remove item from the list
-          const index = data.allPersons.findIndex(x => x.id === person.id)
-          if (index !== -1) {
-            data.allPersons.splice(index, 1)
+    deleteObject (obj) {
+      console.log('Object', obj)
+      const currentUser = localStorage.getItem(GC_USER_ID)
+      console.log('Object', currentUser)
+      if (obj.id !== currentUser) {
+        this.$apollo.mutate({
+          mutation: DELETE_USER_MUTATION,
+          variables: {
+            id: obj.id
+          },
+          update: (store, { data: { deleteObject } }) => {
+            // Read the data from our cache for this query.
+            const data = store.readQuery({ query: ALL_USERS_QUERY })
+            // Remove item from the list
+            const index = data.allUsers.findIndex(x => x.id === obj.id)
+            if (index !== -1) {
+              data.allUsers.splice(index, 1)
+            }
+            // Take the modified data and write it back into the store.
+            store.writeQuery({ query: ALL_USERS_QUERY, data })
           }
-          // Take the modified data and write it back into the store.
-          store.writeQuery({ query: ALL_PEOPLE_QUERY, data })
-        }
-      }).catch((error) => {
-        console.error(error)
-      })
+        }).catch((error) => {
+          console.error(error)
+        })
+      }
     }
   }
 }
 </script>
 
-<style>
-/* body {
-  font-family: Helvetica Neue, Arial, sans-serif;
-  font-size: 14px;
-  color: #444;
-} */
-
+<style lang="scss" scoped>
 /* tr:nth-child(3) { border: solid thin; } */
 table {
   /* border-collapse is needed to make the borders work properly on rows */
@@ -168,44 +181,37 @@ table {
   background-color: white;
   width: 100%;
 }
-
 th {
   height: 40px;
-  background-color: rgb(220,220,220);
+  background-color: var(--theme-color3);
+  color: white;
+  text-align: left;
 }
-
 /* thead > tr {
   -webkit-box-shadow:0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
   -moz-box-shadow:0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
   box-shadow:0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
 } */
-
 tr {
   height: 40px;
   border-bottom: 1px solid lightgray;
 }
-
 tr:hover {
   background-color: rgb(245, 245, 245);
 }
-
 /* td {
   background-color: #f9f9f9;
 } */
-
 /* th, td {
   min-width: 120px;
   padding: 10px 20px;
 } */
-
 th.active {
   color: #fff;
 }
-
 th.active .arrow {
   opacity: 1;
 }
-
 .arrow {
   display: inline-block;
   vertical-align: middle;
@@ -214,19 +220,16 @@ th.active .arrow {
   margin-left: 5px;
   opacity: 0.66;
 }
-
 .arrow.asc {
   border-left: 4px solid transparent;
   border-right: 4px solid transparent;
   border-bottom: 4px solid #fff;
 }
-
 .arrow.dsc {
   border-left: 4px solid transparent;
   border-right: 4px solid transparent;
   border-top: 4px solid #fff;
 }
-
 .effect7
 {
   position:relative;
@@ -234,7 +237,6 @@ th.active .arrow {
   -moz-box-shadow:0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
   box-shadow:0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
 }
-
 .effect7:before, .effect7:after
 {
   content:"";
@@ -250,7 +252,6 @@ th.active .arrow {
   -moz-border-radius:100px / 10px;
   border-radius:100px / 10px;
 }
-
 .effect7:after
 {
   right:10px;

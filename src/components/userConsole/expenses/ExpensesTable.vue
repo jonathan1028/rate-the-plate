@@ -1,82 +1,89 @@
 <template>
-  <table>
-    <thead>
-      <tr>
-        <th
-          v-for='(item, index) in columns'
-          :key='index'
-          :index="index"
-          >
-          {{ item.title | capitalize }}
-          <!-- @click="sortBy(item.dbField)"
-          :class="{ active: sortKey == item.dbField }" -->
-          <!-- <span class="arrow" :class="sortOrders[item.dbField] > 0 ? 'asc' : 'dsc'">
-          </span> -->
-        </th>
-        <th>
-          Links
-        </th>
-      </tr>
+  <div>
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Description</th>
+          <th class="align-right">Amount</th>
+          <th class="align-right">Balance</th>
+          <!-- <th>
+            Links
+          </th> -->
+        </tr>
 
-    </thead>
-    <tbody>
-      <tr
-        v-for='(row, rowIndex) in clonedData'
-        :key='rowIndex'
-        :index="rowIndex"
-      >
-        <!-- @click="setSelection(allExpenses[rowIndex].id, $event)" -->
-        <td v-for='(col, key, index) in columns'
-          :key='index'
-          :index="index"
+      </thead>
+      <tbody>
+        <tr
+          v-for='(row, rowIndex) in allExpenses'
+          :key='rowIndex'
+          :index="rowIndex"
         >
-          <datepicker
-            v-if="col.dbField === 'date'"
-            placeholder="Select Date"
-            v-model="clonedData[rowIndex][col.dbField]"
-          ></datepicker>
-
-        <!-- @click="setTarget(rowIndex, col.dbField)" -->
-          <!-- <div>{{ row[col.dbField] }}</div> -->
-        <!-- @click="viewPerson(row)" -->
-          <input
-            v-if="col.dbField !== 'date'"
-            v-model="clonedData[rowIndex][col.dbField]"
-            type="text"
-            name="cell"
-            @change="update(clonedData[rowIndex][col.dbField], col.dbField, clonedData[rowIndex])"
+          <!-- @click="setSelection(allExpenses[rowIndex].id, $event)" -->
+          <td>
+            <!-- <input
+              placeholder="Select Date"
+              v-model="allExpenses[rowIndex].date"> -->
+            <datepicker
+              placeholder="Select Date"
+              format="MM/dd/yyyy"
+              v-model="allExpenses[rowIndex].date"
+              @closed="update(allExpenses[rowIndex].date, date, allExpenses[rowIndex])"
+            ></datepicker>
+          </td>
+          <!-- @click="setTarget(rowIndex, col.dbField)" -->
+            <!-- <div>{{ row[col.dbField] }}</div> -->
+          <!-- @click="viewPerson(row)" -->
+          <td>
+            <input
+              v-model="allExpenses[rowIndex].description"
+              type="text"
+              name="cell"
+              @change="update(allExpenses[rowIndex].description, description, allExpenses[rowIndex])"
+            >
+          </td>
+          <td
+            class="align-right"
           >
-          <span
-            v-if="col.dbField === 'ownedBy'"
+            <input
+              class="align-right"
+              v-model="allExpenses[rowIndex].amount"
+              type="text"
+              name="cell"
+              @change="update(allExpenses[rowIndex].amount, amount, allExpenses[rowIndex])"
+            >
+          </td>
+          <td
+            class="align-right"
           >
-            {{getName(clonedData[rowIndex][col.dbField])}}
-          </span>
-          <!-- <div v-if="isOwner(col.dbField)">
-            {{getName(row[col.dbField])}}
-          </div>
-          <div v-else>
-            {{row[col.dbField]}}
-          </div> -->
-        </td>
-        <!-- <td>
-          <button
-            @click="updatePerson(row)"
-          >Edit</button>
-          <button
-            @click="deletePerson(row)"
-          >Delete</button>
-        </td> -->
-      </tr>
-    </tbody>
-  </table>
+            <input
+              class="align-right"
+              v-model="allExpenses[rowIndex].amount"
+              type="text"
+              name="cell"
+              @change="update(allExpenses[rowIndex].amount, amount, allExpenses[rowIndex])"
+            >
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <!-- <div
+      v-for='(item, index) in allExpenses'
+      :key='index'
+      :index="index"
+      >
+      {{ item}}
+    </div> -->
+  </div>
 </template>
 
 <script>
 // import { ALL_EXPENSES_QUERY, ALL_PEOPLE_QUERY, DELETE_PERSON_MUTATION } from '../../constants/graphql'
 import { ALL_EXPENSES_QUERY, UPDATE_EXPENSE_MUTATION } from '../../../constants/graphql'
 import Datepicker from 'vuejs-datepicker'
-import { GC_USER_ID } from '../../../constants/settings'
+// import { GC_USER_ID } from '../../../constants/settings'
 import { mapGetters } from 'vuex'
+import { format } from 'date-fns'
 
 export default {
   name: 'ExpensesTable',
@@ -90,8 +97,9 @@ export default {
   data: function () {
     return {
       date: '',
+      amount: '',
+      description: '',
       allExpenses: [],
-      clonedData: [],
       testData: [
         {date: '', amount: 5, description: 'test1'},
         {date: '', amount: 7, description: 'test2'}
@@ -105,6 +113,21 @@ export default {
       // sortOrders: {},
       // sortKey: '',
       // activeCell: {}
+    }
+  },
+  apollo: {
+    // allObjects here pulls the data from ALL_OBJECTS_QUERY and assigns it to the data(){} object at the top of script
+    allExpenses: {
+      query: ALL_EXPENSES_QUERY,
+      variables () {
+        return {
+          userId: this.userId
+        }
+      },
+      result ({ data }) {
+        // Creates clone of data because Apollo data is read only
+        this.allExpenses = JSON.parse(JSON.stringify(data.allExpenses))
+      }
     }
   },
   computed: {
@@ -143,31 +166,6 @@ export default {
       return str.charAt(0).toUpperCase() + str.slice(1)
     }
   },
-  mounted () {
-    console.log('UserId', this.userId)
-    // const expenses = []
-    // let clonedData = []
-    // this.bindedData = Object.assign({}, this.allExpenses)
-
-    // Data from Apollo is read only so it must be cloned in order for it to become editable
-    // console.log('Expenses', this.allExpenses)
-    this.$watch('allExpenses', function () {
-      // console.log(JSON.stringify(this.allExpenses))
-      this.clonedData = JSON.parse(JSON.stringify(this.allExpenses))
-      // this.clonedData = this.allExpenses.slice(0)
-      // console.log('Clone', this.clonedData)
-      // console.log('Test', this.testData)
-    }, {deep: true})
-    //   expenses = Object.assign({}, this.allExpenses)
-    // apollo.watchQuery<any>({
-    //   query: ALL_EXPENSES_QUERY,
-    //   variables: {
-    //     date: this.date,
-    //     description: this.description,
-    //     amount: this.amount
-    //   }
-    // }).subscribe((result) => Object.assign(this.bindedData.description, result.data.description))
-  },
   methods: {
     getName: function (owner) {
       console.log(owner)
@@ -201,46 +199,23 @@ export default {
     //   this.activeCell = this.filteredData[rowIndex][key]
     //   console.log('Active Cell', this.activeCell)
     // },
-    // isOwner: function (field) {
-    //   if (field === 'ownedBy') {
-    //     return true
-    //   } else {
-    //     return false
-    //   }
-    // },
-    // getName: function (owner) {
-    //   if (owner && owner.name) {
-    //     return owner.name
-    //   } else {
-    //     return ''
-    //   }
-    // },
     // sortBy: function (key) {
     //   this.sortKey = key
     //   this.sortOrders[key] = this.sortOrders[key] * -1
     // },
-    // viewPerson: function (person) {
-    //   localStorage.setItem('person', JSON.stringify(person))
-    //   this.$router.push({path: `/person/${person.id}`})
-    // },
     update (value, field, expense) {
-      console.log('Test')
-      let amount = 0
-      let date = ''
-      if (field === 'amount') {
-        amount = parseFloat(value)
-      }
-      if (field === 'date') {
-        date = value
-        console.log('Date', date)
-      }
-      // console.log('Amount', value)
+      console.log('Update', value, ',', field, ',', expense)
+      let amount = parseFloat(expense.amount)
+      let date = format(expense.date)
+      console.log('Date', date)
+
       this.$apollo.mutate({
         mutation: UPDATE_EXPENSE_MUTATION,
         variables: {
           id: expense.id,
+          date: date,
           amount: amount,
-          date: date
+          description: expense.description
         }
         // update: (store, { data: { updateExpense } }) => {
         //   // Get data from store
@@ -285,15 +260,6 @@ export default {
     //     console.error(error)
     //   })
     // }
-  },
-  apollo: {
-    // allObjects here pulls the data from ALL_OBJECTS_QUERY and assigns it to the data(){} object at the top of script
-    allExpenses: {
-      query: ALL_EXPENSES_QUERY,
-      variables: {
-        userId: localStorage.getItem(GC_USER_ID)
-      }
-    }
   }
 }
 </script>
@@ -319,6 +285,7 @@ table {
 th {
   height: 40px;
   background-color: rgb(220,220,220);
+  text-align: left;
 }
 
 /* thead > tr {
@@ -374,38 +341,7 @@ th.active .arrow {
   border-top: 4px solid #fff;
 }
 
-.effect7
-{
-  position:relative;
-  -webkit-box-shadow:0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
-  -moz-box-shadow:0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
-  box-shadow:0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
-}
-
-.effect7:before, .effect7:after
-{
-  content:"";
-  position:absolute;
-  z-index:-1;
-  -webkit-box-shadow:0 0 20px rgba(0,0,0,0.8);
-  -moz-box-shadow:0 0 20px rgba(0,0,0,0.8);
-  box-shadow:0 0 20px rgba(0,0,0,0.8);
-  top:0;
-  bottom:0;
-  left:10px;
-  right:10px;
-  -moz-border-radius:100px / 10px;
-  border-radius:100px / 10px;
-}
-
-.effect7:after
-{
-  right:10px;
-  left:auto;
-  -webkit-transform:skew(8deg) rotate(3deg);
-  -moz-transform:skew(8deg) rotate(3deg);
-  -ms-transform:skew(8deg) rotate(3deg);
-  -o-transform:skew(8deg) rotate(3deg);
-  transform:skew(8deg) rotate(3deg);
+.align-right {
+  text-align: right;
 }
 </style>
