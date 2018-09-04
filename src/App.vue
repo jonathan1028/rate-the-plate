@@ -10,10 +10,37 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss">
 html {
   background-color: whitesmoke;
   font-family: 'Open Sans', sans-serif;
+}
+
+/* ------------------------- Application Variables ------------------------- */
+:root {
+  --page-height: 100vh;
+  --page-width: 100vw;
+
+  --font-color1: #47535e;
+  --font-color3: #f7ca44;
+  --font-color4: lightgray;
+
+  --background-color1: #fc0;
+  --background-color2: white;
+  --background-color3: #555;
+  --background-color4: #e7e9ea;
+
+  --theme-color1: #f7ca44;
+  --theme-color2: #fff2c7;
+  --theme-color3: #47535d;
+  --theme-color4: lightgray;
+  --theme-color5: #e7e9ea;
+  --color2: rgb(42, 177, 182);
+  --link-color: rgb(48,62,240);
+  --shadow3: 1.5vh -1vh 1vh rgba(0, 7, 2, 0.3);
+  --shadow1: 0 .5vh 2vh rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
+  --shadow2: 1.5vh -1vh 1vh rgba(0, 0, 0, 0.3);
+  --text-color1: #47535d;
 }
 
 .main-content {

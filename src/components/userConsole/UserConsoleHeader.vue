@@ -18,6 +18,10 @@
             <router-link to="/expenses">Expenses</router-link>
             <div>|</div>
             <router-link to="/vendors">Vendors</router-link>
+            <div>|</div>
+            <router-link to="/products">Products</router-link>
+            <div>|</div>
+            <router-link to="/shoppinglists">Shopping Lists</router-link>
             <!-- <div>|</div>
             <router-link to="/admin">Admin Panel</router-link>
             <div>|</div>

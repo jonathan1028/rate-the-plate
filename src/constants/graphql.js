@@ -69,6 +69,89 @@ export const CREATE_VENDOR_MUTATION = gql`
   }
 `
 
+// ----------------------------------------- Shopping Lists ---------------------------------------------
+export const ALL_SHOPPINGLISTS_QUERY = gql`
+  query AllShoppingListsQuery {
+    allShoppingLists {
+      id
+      name
+    }
+  }
+`
+
+export const CREATE_SHOPPINGLIST_MUTATION = gql`
+  mutation CreateShoppingListMutation($name: String) {
+    createShoppingList(
+      name: $name
+    ) {
+      id
+    }
+  }
+`
+
+// ----------------------------------------- Products ---------------------------------------------
+export const ALL_PRODUCTS_QUERY = gql`
+  query AllProductsQuery {
+    allProducts {
+      id
+      name
+      inCart
+      category
+      price
+      unit
+    }
+  }
+`
+
+export const MY_PRODUCTS_QUERY = gql`
+  query AllProductsQuery ($shoppingListId: ID!){
+    allProducts (filter: {shoppingList: {id: $shoppingListId}}){
+      id
+      name
+      inCart
+      category
+      price
+      unit
+    }
+  }
+`
+
+export const CREATE_PRODUCT_MUTATION = gql`
+  mutation CreateProductMutation($name: String, $shoppingListId: ID!, $category: String, $price: Float, $unit: String) {
+    createProduct(
+      name: $name
+      shoppingListId: $shoppingListId
+      category: $category
+      price: $price
+      unit: $unit
+    ) {
+      id
+      name
+    }
+  }
+`
+
+export const UPDATE_PRODUCT_MUTATION = gql`
+  mutation UpdateProductMutation($id: ID!,  $inCart: Boolean) {
+    updateProduct(
+      id: $id,
+      inCart: $inCart
+    ) {
+      id
+    }
+  }
+`
+
+export const DELETE_PRODUCT_MUTATION = gql`
+  mutation DeleteProductMutation($id: ID!) {
+    deleteProduct(
+      id: $id,
+    ) {
+      id
+    }
+  }
+`
+
 // ----------------------------------------- Queries ---------------------------------------------
 export const ALL_USERS_QUERY = gql`
   query AllUsersQuery {

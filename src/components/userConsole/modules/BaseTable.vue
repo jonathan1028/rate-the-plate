@@ -131,7 +131,7 @@ export default {
     },
     view: function (obj) {
       // Creates a dynamic path and stores to localStorage regardless of what type of object is passed in
-      let path = '/admin/' + obj.__typename.toLowerCase() + '/' + obj.id
+      let path = obj.__typename.toLowerCase() + '/' + obj.id
       localStorage.setItem(obj.__typename.toLowerCase(), JSON.stringify(obj))
       this.$router.push({path: path})
     },
@@ -183,7 +183,7 @@ table {
 }
 th {
   height: 40px;
-  background-color: var(--theme-color3);
+  background-color: var(--background-color3);
   color: white;
   text-align: left;
 }

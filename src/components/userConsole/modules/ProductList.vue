@@ -1,26 +1,26 @@
 <template>
   <div class="page">
-    <h1>Vendors</h1>
+    <h1>Products</h1>
     <div>
       <form class="search">
         <input name="query" v-model="searchQuery" placeholder="Search">
       </form>
-      <base-table
+      <base-list
         :data="query"
         :columns="columns"
         :filter-key="searchQuery">
-      </base-table>
+      </base-list>
     </div>
   </div>
 </template>
 
 <script>
-import BaseTable from '../modules/BaseTable'
-import { ALL_VENDORS_QUERY } from '../../../constants/graphql'
+import BaseList from '../modules/BaseList'
+import { MY_PRODUCTS_QUERY } from '../../../constants/graphql'
 export default {
-  name: 'VendorsPage',
+  name: 'ProductList',
   components: {
-    BaseTable
+    BaseList
   },
   data () {
     return {
@@ -36,11 +36,16 @@ export default {
   },
   apollo: {
     // allUser here pulls the data from ALL_USERS_QUERY and assigns it to the data(){} object at the top of script
-    allVendors: {
-      query: ALL_VENDORS_QUERY,
+    allProducts: {
+      query: MY_PRODUCTS_QUERY,
+      variables () {
+        return {
+          shoppingListId: this.$route.params.id
+        }
+      },
       result ({ data }) {
-        // Sets variable query to the gql data for a more modular UI template
-        this.query = data.allVendors
+        // Creates clone of data because Apollo data is read only
+        this.query = JSON.parse(JSON.stringify(data.allProducts))
       }
     }
   }

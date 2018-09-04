@@ -14,6 +14,9 @@ import Expenses from '../components/userConsole/expenses/Expenses'
 import ReadExpense from '../components/userConsole/expenses/ReadExpense'
 import UpdateExpense from '../components/userConsole/expenses/UpdateExpense'
 import VendorsPage from '../components/userConsole/pages/VendorsPage'
+import ShoppingListsPage from '../components/userConsole/pages/ShoppingListsPage'
+import ProductsPage from '../components/userConsole/pages/ProductsPage'
+import ReadShoppingListPage from '../components/userConsole/pages/ReadShoppingListPage'
 
 import AdminConsoleHeader from '@/components/adminConsole/AdminConsoleHeader'
 import Admin from '../components/adminConsole/Admin'
@@ -93,6 +96,27 @@ const router = new Router({
         {
           path: '/vendors',
           component: VendorsPage,
+          meta: {
+            requiresAuth: true
+          }
+        },
+        {
+          path: '/shoppinglists',
+          component: ShoppingListsPage,
+          meta: {
+            requiresAuth: true
+          }
+        },
+        {
+          path: '/shoppinglist/:id',
+          component: ReadShoppingListPage,
+          meta: {
+            requiresAuth: true
+          }
+        },
+        {
+          path: '/products',
+          component: ProductsPage,
           meta: {
             requiresAuth: true
           }

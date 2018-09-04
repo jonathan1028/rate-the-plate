@@ -1,6 +1,6 @@
 <template>
   <div class="page">
-    <h1>Vendors</h1>
+    <h1>Products</h1>
     <div>
       <form class="search">
         <input name="query" v-model="searchQuery" placeholder="Search">
@@ -16,9 +16,9 @@
 
 <script>
 import BaseTable from '../modules/BaseTable'
-import { ALL_VENDORS_QUERY } from '../../../constants/graphql'
+import { ALL_PRODUCTS_QUERY } from '../../../constants/graphql'
 export default {
-  name: 'VendorsPage',
+  name: 'ProductsPage',
   components: {
     BaseTable
   },
@@ -29,18 +29,25 @@ export default {
       searchQuery: '',
       columns: [
         {dbField: 'name', title: 'name'},
-        {dbField: 'id', title: 'id'},
+        {dbField: 'category', title: 'category'},
+        {dbField: 'price', title: 'price'},
+        {dbField: 'unit', title: 'unit'},
         {dbField: 'createdAt', title: 'createdAt'}
       ]
     }
   },
   apollo: {
     // allUser here pulls the data from ALL_USERS_QUERY and assigns it to the data(){} object at the top of script
-    allVendors: {
-      query: ALL_VENDORS_QUERY,
+    allProducts: {
+      query: ALL_PRODUCTS_QUERY,
+      variables () {
+        return {
+          shoppingListId: this.$route.params.id
+        }
+      },
       result ({ data }) {
         // Sets variable query to the gql data for a more modular UI template
-        this.query = data.allVendors
+        this.query = data.allProducts
       }
     }
   }
