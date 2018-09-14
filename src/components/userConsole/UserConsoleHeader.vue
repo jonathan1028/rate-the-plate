@@ -22,6 +22,8 @@
             <router-link to="/products">Products</router-link>
             <div>|</div>
             <router-link to="/shoppinglists">Shopping Lists</router-link>
+            <div>|</div>
+            <router-link to="/recipes">Recipes</router-link>
             <!-- <div>|</div>
             <router-link to="/admin">Admin Panel</router-link>
             <div>|</div>
@@ -46,18 +48,28 @@
           </button>
         </div>
     </div>
+    <div
+      v-if="toggleCreateRecipeModal"
+      class="modalArea">
+      Test
+    </div>
     <router-view></router-view>
   </div>
 </template>
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
+import CreateRecipe from './modals/CreateRecipe'
 
 export default {
   name: 'UserConsoleHeader',
+  components: {
+    CreateRecipe
+  },
   data () {
     console.log('user', localStorage.getItem('user'))
     return {
+      toggleCreateRecipeModal: false,
       user: JSON.parse(localStorage.getItem('user'))
     }
   },

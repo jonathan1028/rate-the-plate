@@ -1,11 +1,14 @@
 import Vue from 'vue'
 import { ApolloClient } from 'apollo-client'
+// import ApolloClient from 'apollo-boost'
+import { withClientState } from 'apollo-link-state'
 import { HttpLink } from 'apollo-link-http'
 import { InMemoryCache } from 'apollo-cache-inmemory'
 import VueApollo from 'vue-apollo'
 import { GC_AUTH_TOKEN } from './constants/settings'
 import { WebSocketLink } from 'apollo-link-ws'
-import { ApolloLink, concat, split } from 'apollo-link'
+// import { ApolloLink, concat, split } from 'apollo-link'
+import { ApolloLink, split } from 'apollo-link'
 import { getMainDefinition } from 'apollo-utilities'
 
 // Create an http link:
@@ -50,12 +53,41 @@ const authMiddleware = new ApolloLink((operation, forward) => {
   return forward(operation)
 })
 
-const cache = new InMemoryCache(window.__APOLLO_STATE)
+export const cache = new InMemoryCache(window.__APOLLO_STATE)
+
+const resolvers = {
+  Mutation: {
+    updateHello (_, { message }, { cache }) {
+      const data = {
+        hello: {
+          __typename: 'Hello',
+          msg: message
+        }
+      }
+
+      return cache.writeData({ data })
+    }
+  }
+}
+
+const stateLink = withClientState({
+  cache,
+  resolvers,
+  defaults: {
+    isEditMode: true,
+    hello: {
+      __typename: 'Hello',
+      msg: 'world'
+    }
+  }
+})
+
+// const defaultState = { isEditMode: false }
 
 // Create the apollo client
-const apolloClient = new ApolloClient({
+export const apolloClient = new ApolloClient({
   // authMiddleware adds authentication tokens
-  link: concat(authMiddleware, link),
+  link: ApolloLink.from([stateLink, authMiddleware, link]),
   cache: cache,
   connectToDevTools: true
 })

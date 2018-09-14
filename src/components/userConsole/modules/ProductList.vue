@@ -40,7 +40,7 @@ export default {
       query: MY_PRODUCTS_QUERY,
       variables () {
         return {
-          shoppingListId: this.$route.params.id
+          shoppingListId: this.$route.params.id || null
         }
       },
       result ({ data }) {

@@ -1,5 +1,5 @@
 # project: cjgn20e3o4i1w0105pjn3t5p6
-# version: 13
+# version: 14
 
 type AuthenticateUserPayload @model {
   id: ID! @isUnique
@@ -110,6 +110,16 @@ type Product @model {
   category: String
   unit: String
   shoppingList: ShoppingList @relation(name: "ProductsOnList")
+  recipes: [Recipe!]! @relation(name: "ProductsOnRecipe")
+}
+
+type Recipe @model {
+  id: ID! @isUnique
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  name: String
+  ingredients: [Product!]! @relation(name: "ProductsOnRecipe")
+  steps: [String!]
 }
 
 type ShoppingList @model {

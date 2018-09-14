@@ -7,13 +7,13 @@
       <label for="">Email:</label>
       <div></div>
     </div> -->
-    <create-product></create-product>
+    <select-product></select-product>
     <product-list></product-list>
   </div>
 </template>
 
 <script>
-import CreateProduct from '../modules/CreateProduct'
+import SelectProduct from '../modules/SelectProduct'
 import ProductList from '../modules/ProductList'
 
 export default {
@@ -25,7 +25,7 @@ export default {
     console.log('List', this.shoppingList)
   },
   components: {
-    CreateProduct, ProductList
+    SelectProduct, ProductList
   }
 }
 </script>

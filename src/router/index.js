@@ -17,6 +17,7 @@ import VendorsPage from '../components/userConsole/pages/VendorsPage'
 import ShoppingListsPage from '../components/userConsole/pages/ShoppingListsPage'
 import ProductsPage from '../components/userConsole/pages/ProductsPage'
 import ReadShoppingListPage from '../components/userConsole/pages/ReadShoppingListPage'
+import RecipesPage from '../components/userConsole/pages/RecipesPage'
 
 import AdminConsoleHeader from '@/components/adminConsole/AdminConsoleHeader'
 import Admin from '../components/adminConsole/Admin'
@@ -117,6 +118,13 @@ const router = new Router({
         {
           path: '/products',
           component: ProductsPage,
+          meta: {
+            requiresAuth: true
+          }
+        },
+        {
+          path: '/recipes',
+          component: RecipesPage,
           meta: {
             requiresAuth: true
           }

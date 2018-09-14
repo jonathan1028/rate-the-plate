@@ -2,6 +2,7 @@
   <div class="page">
     <h1>Products</h1>
     <div>
+      <create-product></create-product>
       <form class="search">
         <input name="query" v-model="searchQuery" placeholder="Search">
       </form>
@@ -16,11 +17,12 @@
 
 <script>
 import BaseTable from '../modules/BaseTable'
+import CreateProduct from '../modules/CreateProduct'
 import { ALL_PRODUCTS_QUERY } from '../../../constants/graphql'
 export default {
   name: 'ProductsPage',
   components: {
-    BaseTable
+    BaseTable, CreateProduct
   },
   data () {
     return {

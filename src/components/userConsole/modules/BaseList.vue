@@ -1,5 +1,32 @@
 <template>
   <div class="component">
+    <div>
+      <div
+        v-for='(category, index) in getCategories'
+        :key='index'
+      >
+        {{category}}
+        <ul>
+          <div
+            v-for='(row, index) in filteredData(category)'
+            :key='index'
+          >
+            <div>
+              <input
+                v-model="row.inCart"
+                @change="update(row)"
+                class="checkbox"
+                type="checkbox">
+              {{row.name}}
+              <button
+                @click="deleteObject(row)"
+              >X</button>
+            </div>
+          </div>
+        </ul>
+      </div>
+    </div>
+
     <ul>
       <div
         v-for='(row, index) in filteredData'
@@ -43,11 +70,29 @@ export default {
     }
   },
   computed: {
-    filteredData: function () {
+    getCategories: function () {
+      let categories = []
+      this.data.forEach(x => {
+        if (!categories.includes(x.category)) {
+          categories.push(x.category)
+        }
+      })
+      return categories
+    }
+  },
+  filters: {
+    capitalize: function (str) {
+      return str.charAt(0).toUpperCase() + str.slice(1)
+    }
+  },
+  methods: {
+    filteredData: function (category) {
       var sortKey = this.sortKey
       var filterKey = this.filterKey && this.filterKey.toLowerCase()
       var order = this.sortOrders[sortKey] || 1
-      var data = this.data
+      let data = this.data.filter(x => {
+        return x.category === category
+      })
       if (filterKey) {
         data = data.filter(function (row) {
           return Object.keys(row).some(function (key) {
@@ -63,14 +108,7 @@ export default {
         })
       }
       return data
-    }
-  },
-  filters: {
-    capitalize: function (str) {
-      return str.charAt(0).toUpperCase() + str.slice(1)
-    }
-  },
-  methods: {
+    },
     getName (owner) {
       return owner.firstName + ' ' + owner.lastName
     },

@@ -38,6 +38,7 @@
     "vue-chartjs": "^3.3.1",
     "vue-editortable": "^1.1.5",
     "vue-router": "^3.0.1",
+    "vue-select": "^2.5.0",
     "vuejs-datepicker": "^1.1.4",
     "vuex": "^3.0.1",
     "vuex-persist": "^1.4.0"
