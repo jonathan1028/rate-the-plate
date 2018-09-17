@@ -32,7 +32,7 @@
 </template>
 
 <script>
-import { CREATE_PRODUCT_MUTATION, MY_PRODUCTS_QUERY } from '../../../constants/graphql'
+import { CREATE_PRODUCTTEMPLATE_MUTATION, ALL_PRODUCTTEMPLATES_QUERY } from '../../../constants/graphql'
 
 export default {
   name: 'CreateProduct',
@@ -42,40 +42,34 @@ export default {
       name: '',
       category: '',
       unit: '',
-      price: null,
-      currentUserId: this.$store.state.auth.user.id
+      price: null
+      // currentUserId: this.$store.state.auth.user.id
     }
   },
   methods: {
     submit () {
-      console.log('Shopping List Id', this.$route.params.id)
+      // console.log('Shopping List Id', this.$route.params.id)
       let price = parseFloat(this.price)
       this.$apollo.mutate({
-        mutation: CREATE_PRODUCT_MUTATION,
+        mutation: CREATE_PRODUCTTEMPLATE_MUTATION,
         variables: {
-          shoppingListId: this.$route.params.id,
           name: this.name,
           category: this.category,
           unit: this.unit,
-          price: price
+          price: price,
+          template: true
         },
-        update: (store, { data: { createProduct } }) => {
+        update: (store, { data: { createProductTemplate } }) => {
           // Pull data from the stored query
           const data = store.readQuery({
-            query: MY_PRODUCTS_QUERY,
-            variables: {
-              shoppingListId: this.$route.params.id
-            }
+            query: ALL_PRODUCTTEMPLATES_QUERY
           })
           // We add the new data
-          data.allProducts.push(createProduct)
+          data.allProductTemplates.push(createProductTemplate)
           console.log('Test', data)
           // We update the cache
           store.writeQuery({
-            query: MY_PRODUCTS_QUERY,
-            variables: {
-              shoppingListId: this.$route.params.id
-            },
+            query: ALL_PRODUCTTEMPLATES_QUERY,
             data: data
           })
         }

@@ -28,7 +28,7 @@ export default {
       sortColumn: '',
       searchQuery: '',
       columns: [
-        {dbField: 'name', title: 'name'},
+        {dbField: 'template', title: 'name'},
         {dbField: 'id', title: 'id'},
         {dbField: 'createdAt', title: 'createdAt'}
       ]
@@ -40,7 +40,7 @@ export default {
       query: MY_PRODUCTS_QUERY,
       variables () {
         return {
-          shoppingListId: this.$route.params.id || null
+          listId: this.$route.params.id || null
         }
       },
       result ({ data }) {

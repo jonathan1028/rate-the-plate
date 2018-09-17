@@ -18,7 +18,7 @@
 <script>
 import BaseTable from '../modules/BaseTable'
 import CreateProduct from '../modules/CreateProduct'
-import { ALL_PRODUCTS_QUERY } from '../../../constants/graphql'
+import { ALL_PRODUCTTEMPLATES_QUERY } from '../../../constants/graphql'
 export default {
   name: 'ProductsPage',
   components: {
@@ -40,8 +40,8 @@ export default {
   },
   apollo: {
     // allUser here pulls the data from ALL_USERS_QUERY and assigns it to the data(){} object at the top of script
-    allProducts: {
-      query: ALL_PRODUCTS_QUERY,
+    allProductTemplates: {
+      query: ALL_PRODUCTTEMPLATES_QUERY,
       variables () {
         return {
           shoppingListId: this.$route.params.id
@@ -49,7 +49,7 @@ export default {
       },
       result ({ data }) {
         // Sets variable query to the gql data for a more modular UI template
-        this.query = data.allProducts
+        this.query = data.allProductTemplates
       }
     }
   }

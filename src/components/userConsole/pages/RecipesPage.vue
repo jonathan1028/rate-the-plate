@@ -11,17 +11,17 @@
       <form class="search">
         <input name="query" v-model="searchQuery" placeholder="Search">
       </form>
-      <base-table
+      <recipes-table
         :data="query"
         :columns="columns"
         :filter-key="searchQuery">
-      </base-table>
+      </recipes-table>
     </div>
   </div>
 </template>
 
 <script>
-import BaseTable from '../modules/BaseTable'
+import RecipesTable from '../modules/RecipesTable'
 import { ALL_RECIPES_QUERY } from '../../../constants/graphql'
 import gql from 'graphql-tag'
 import { apolloClient, cache } from '../../../apollo-client'
@@ -30,7 +30,7 @@ import { apolloClient, cache } from '../../../apollo-client'
 export default {
   name: 'RecipesPage',
   components: {
-    BaseTable
+    RecipesTable
   },
   data () {
     return {
@@ -39,6 +39,7 @@ export default {
       searchQuery: '',
       isEditMode: false,
       hello: '',
+      allRecipes: [],
       columns: [
         {dbField: 'name', title: 'name'}
         // {dbField: 'category', title: 'category'},
@@ -61,12 +62,18 @@ export default {
       query {
         isEditMode @client
       }
+    `,
+    showCreateRecipeModal: gql`
+      query {
+        showCreateRecipeModal @client
+      }
     `
   },
   methods: {
     create () {
       // apolloClient.cache.data.data.ROOT_QUERY.isEditMode = !apolloClient.cache.data.data.ROOT_QUERY.isEditMode
       apolloClient.writeData({ data: { isEditMode: !this.isEditMode } })
+      apolloClient.writeData({ data: { showCreateRecipeModal: true } })
       // console.log('Create', apolloClient.readData())
       // const recipes = apolloClient.readQuery({query: ALL_RECIPES_QUERY}).then((result) => console.log('Result', result))
       const data = cache.readQuery({ query: ALL_RECIPES_QUERY })

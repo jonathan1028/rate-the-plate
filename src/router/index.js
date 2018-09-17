@@ -18,6 +18,7 @@ import ShoppingListsPage from '../components/userConsole/pages/ShoppingListsPage
 import ProductsPage from '../components/userConsole/pages/ProductsPage'
 import ReadShoppingListPage from '../components/userConsole/pages/ReadShoppingListPage'
 import RecipesPage from '../components/userConsole/pages/RecipesPage'
+import RecipePage from '../components/userConsole/pages/RecipePage'
 
 import AdminConsoleHeader from '@/components/adminConsole/AdminConsoleHeader'
 import Admin from '../components/adminConsole/Admin'
@@ -125,6 +126,13 @@ const router = new Router({
         {
           path: '/recipes',
           component: RecipesPage,
+          meta: {
+            requiresAuth: true
+          }
+        },
+        {
+          path: '/recipe/:id',
+          component: RecipePage,
           meta: {
             requiresAuth: true
           }

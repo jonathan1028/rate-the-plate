@@ -1,22 +1,17 @@
 <template>
-  <div class="modal _box-shadow1">
-    <div class="modal-header">
-      <h2>Create Recipe</h2>
+  <div class="page">
+    <div class="field">
+      <h1>{{recipe.name}}</h1>
     </div>
-    <div class="modal-body">
-      <div class="modal-field">
-        <div class="modal-label">Recipe Name:</div>
-        <div class="modal-input">
-          <input
-            v-model="name"
-            type="text"
-            placeholder="">
-        </div>
-      </div>
-    </div>
+    <button
+      @click="toggleEditMode"
+    >Edit</button>
+    <div>{{isEditMode}}</div>
     <div>
       <div>Ingredients</div>
-      <div class="container">
+      <div
+        class="container"
+        v-if="isEditMode">
         <div class="v-select">
           <v-select
             placeholder="Add Ingredient"
@@ -46,17 +41,15 @@
           :key='index'
         >
           <div>
-            {{row.name}}
+            - {{`${row.quantity} ${row.template.unit}`}} {{row.template.name}}
             <!-- - {{`${row.quantity} ${row.unit} ${row.name}`}} -->
-            <button
-              @click="deleteObject(row)"
-            >X</button>
           </div>
         </div>
       </ul>
     </div>
     <div>
       <div>Steps</div>
+      <div v-if="isEditMode">
         <input
           v-model="newStep"
           type="text"
@@ -66,64 +59,59 @@
           >
           + Add
         </button>
+      </div>
       <ul>
         <div
-          v-for='(row, index) in steps'
+          v-for='(row, index) in recipe.steps'
           :key='index'
         >
           <div>
             - {{row}}
-            <button
-              @click="deleteObject(row)"
-            >X</button>
+            <!-- - {{`${row.quantity} ${row.unit} ${row.name}`}} -->
           </div>
         </div>
       </ul>
     </div>
-    <div class="modal-footer">
-      <button class="_button1"
-        @click="submit()"
-      >
-        Submit
-      </button>
-      <button
-        class="_button3"
-        @click="cancel()"
-      >
-        Cancel
-      </button>
-    </div>
+    <button
+      v-if="isEditMode"
+      @click="save"
+      >Save
+    </button>
+
   </div>
 </template>
 
 <script>
-import { ALL_RECIPES_QUERY, CREATE_RECIPE_MUTATION, CREATE_PRODUCT_MUTATION, ALL_PRODUCTTEMPLATES_QUERY } from '../../../constants/graphql'
-// import { GET_USER_QUERY } from '../../../constants/graphql/users'
-import { apolloClient } from '../../../apollo-client'
-import AddIngredient from '../modules/AddIngredient'
+import SelectProduct from '../modules/SelectProduct'
 import ProductList from '../modules/ProductList'
+import { ALL_PRODUCTTEMPLATES_QUERY } from '../../../constants/graphql'
+import gql from 'graphql-tag'
+import { apolloClient } from '../../../apollo-client'
 import vSelect from 'vue-select'
-// import gql from 'graphql-tag'
 
 export default {
-  name: 'CreateRecipeModal',
+  name: 'RecipePage',
   components: {
-    AddIngredient, ProductList, vSelect
+    vSelect, SelectProduct, ProductList
+  },
+  beforeCreate () {
+    this.recipe = JSON.parse(localStorage.getItem('recipe'))
+    this.id = this.$route.params.id
+    console.log('User', this.user, this.id)
+    console.log('Recipe', this.recipe)
   },
   data () {
     return {
-      name: '',
-      newStep: '',
+      ingredients: this.recipe.ingredients,
+      query: [],
+      isEditMode: false,
       selected: '',
-      quantity: null,
-      query: [{label: 'Cookies', value: 'Cookies'}, {label: 'Broccoli', value: 'Broccoli'}],
-      ingredients: [],
-      steps: []
-      // ingredients: [{name: 'Bananas', quantity: 1, unit: 'lb'}, {name: 'Cookies', quantity: 3, unit: 'lb'}],
-      // currentUserId: this.$store.state.auth.user.id
+      quantity: null
+      // unit: ''
     }
   },
   apollo: {
+    // allUser here pulls the data from ALL_USERS_QUERY and assigns it to the data(){} object at the top of script
     allProductTemplates: {
       query: ALL_PRODUCTTEMPLATES_QUERY,
       result ({ data }) {
@@ -131,25 +119,37 @@ export default {
         this.query = JSON.parse(JSON.stringify(data.allProductTemplates))
         // this.isEditMode = data.isEditMode
       }
-    }
+    },
+    isEditMode: gql`
+      query {
+        isEditMode @client
+      }
+    `
   },
   methods: {
-    add () {
-      this.steps.push(this.newStep)
+    toggleEditMode () {
+      apolloClient.writeData({ data: { isEditMode: true } })
+    },
+    save () {
+      apolloClient.writeData({ data: { isEditMode: false } })
     },
     addIngredient () {
-      this.selected['quantity'] = parseFloat(this.quantity)
-      this.ingredients.push(this.selected)
-    },
-    cancel () {
-      apolloClient.writeData({ data: { showCreateRecipeModal: false } })
-      console.log('Ingredients2', this.ingredients)
+      console.log('Enter', this.selected)
+      let newIngredient = JSON.parse(JSON.stringify(this.selected))
+      newIngredient['quantity'] = parseFloat(this.quantity) || ''
+      newIngredient['template'] = {
+        unit: this.selected.unit || '',
+        name: this.selected.name || ''
+      }
+      this.ingredients.push(newIngredient)
+      console.log('New Ingredients', this.ingredients)
     },
     submit () {
       console.log('Modal Items', this.name, this.steps)
       this.$apollo.mutate({
-        mutation: CREATE_RECIPE_MUTATION,
+        mutation: UPDATE_RECIPE_MUTATION,
         variables: {
+          id: this.$route.params.id,
           name: this.name,
           steps: this.steps
         },
@@ -193,77 +193,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.modal {
-  position: fixed; /* Stay in place */
-  z-index: 1; /* Sit on top */
-  left: 24.25vw;
-  top: 15vh;
-  width: 45vw; /* Full width */
-  height: auto; /* Full height */
-  margin-left: auto;
-  margin-right: auto;
-  padding: 5vh;
-  // overflow: auto; /* Enable scroll if needed */
-  opacity: 1;
-  background-color: #fefefe;
-  animation-name: animatetop;
-  animation-duration: 0.4s
+.page {
+  padding: 3vh;
+  background-color: white;
 }
-.modal-header {
-  border-bottom: .15vh solid var(--theme-color1);
-    // padding: 2px 16px;
-    // background-color: #5cb85c;
-    // color: white;
-}
-.modal-body {
-  // padding: 3vh 2vh;
-}
-.modal-footer {
-  margin-top: 5vh;
+.field {
   display: flex;
-  justify-content: space-around;
-    // padding: 2px 16px;
-    // background-color: #5cb85c;
-    // color: white;
-}
-.modal-field {
-  // border: 1px solid black;
-  display: grid;
-  grid-template-columns: 25% 75%;
-  // width: 100%;
-  margin-top: 2vh;
-  margin-bottom: 3vh;
-
-  .modal-label {
-    display: flex;
-    align-self: flex-end;
-    // margin: 0px;
-    // padding: 0px;
-    // text-align: left;
-  }
-  .modal-input {
-    input {
-      // border: 1px solid black;
-      width: 100%;
-      height: 3vh;
-    }
-  }
-  // border: 1px solid black;
-}
-/* Add Animation */
-@keyframes animatetop {
-    from {top: -300px; opacity: 0}
-    to {top: 15vh; opacity: 1}
-}
-.modal-background {
-  z-index: -1;
-  // position: fixed;
-  // top: 0;
-  // left: 0;
-  // width: 100%;
-  // height: 100%;
-  // background-color: #888;
-  // opacity: 0.5;
+  align-items: flex-end
 }
 .container {
   border: 1px solid lightgray;

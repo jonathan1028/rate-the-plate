@@ -49,9 +49,9 @@
         </div>
     </div>
     <div
-      v-if="toggleCreateRecipeModal"
-      class="modalArea">
-      Test
+      class="modalArea"
+      v-if="showCreateRecipeModal">
+      <create-recipe/>
     </div>
     <router-view></router-view>
   </div>
@@ -60,6 +60,7 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import CreateRecipe from './modals/CreateRecipe'
+import gql from 'graphql-tag'
 
 export default {
   name: 'UserConsoleHeader',
@@ -72,6 +73,13 @@ export default {
       toggleCreateRecipeModal: false,
       user: JSON.parse(localStorage.getItem('user'))
     }
+  },
+  apollo: {
+    showCreateRecipeModal: gql`
+      query {
+        showCreateRecipeModal @client
+      }
+    `
   },
   computed: mapGetters(['authenticated', 'userId']),
   methods: mapActions(['login', 'logout'])

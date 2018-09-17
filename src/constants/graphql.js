@@ -88,14 +88,13 @@ export const CREATE_SHOPPINGLIST_MUTATION = gql`
     }
   }
 `
+// ----------------------------------------- ProductTemplates ---------------------------------------------
 
-// ----------------------------------------- Products ---------------------------------------------
-export const ALL_PRODUCTS_QUERY = gql`
-  query AllProductsQuery {
-    allProducts {
+export const ALL_PRODUCTTEMPLATES_QUERY = gql`
+  query AllProductTemplatesQuery {
+    allProductTemplates {
       id
       name
-      inCart
       category
       price
       unit
@@ -103,30 +102,67 @@ export const ALL_PRODUCTS_QUERY = gql`
   }
 `
 
-export const MY_PRODUCTS_QUERY = gql`
-  query AllProductsQuery ($shoppingListId: ID!){
-    allProducts (filter: {shoppingList: {id: $shoppingListId}}){
-      id
-      name
-      inCart
-      category
-      price
-      unit
-    }
-  }
-`
-
-export const CREATE_PRODUCT_MUTATION = gql`
-  mutation CreateProductMutation($name: String, $shoppingListId: ID, $category: String, $price: Float, $unit: String) {
-    createProduct(
+export const CREATE_PRODUCTTEMPLATE_MUTATION = gql`
+  mutation CreateProductTemplateMutation($name: String, $category: String, $price: Float, 
+  $unit: String) {
+    createProductTemplate(
       name: $name
-      shoppingListId: $shoppingListId
       category: $category
       price: $price
       unit: $unit
     ) {
       id
       name
+      category
+      price
+      unit
+    }
+  }
+`
+
+// ----------------------------------------- Products ---------------------------------------------
+export const ALL_PRODUCTS_QUERY = gql`
+  query AllProductsQuery {
+    allProducts {
+      id
+      inCart
+      template {
+        id
+        name
+      }
+    }
+  }
+`
+
+export const MY_PRODUCTS_QUERY = gql`
+  query AllProductsQuery ($listId: ID!){
+    allProducts (filter: {
+      OR: [{shoppingList: {id: $listId}}, {recipe: {id: $listId}}]
+    }){
+      id
+      inCart
+      template {
+        id
+        name
+      }
+    }
+  }
+`
+
+export const CREATE_PRODUCT_MUTATION = gql`
+  mutation CreateProductMutation($templateId: ID, $shoppingListId: ID, $recipeId: ID, $quantity: Float) {
+    createProduct(
+      templateId: $templateId
+      shoppingListId: $shoppingListId
+      recipeId: $recipeId
+      quantity: $quantity
+    ) {
+      id
+      inCart
+      template {
+        id
+        name
+      }
     }
   }
 `
@@ -159,8 +195,31 @@ export const ALL_RECIPES_QUERY = gql`
       id
       name
       steps
+      ingredients {
+        id
+        quantity
+        template {
+          name
+          unit
+          category
+        }
+      }
     }
     isEditMode @ client
+    ingredients @ client
+  }
+`
+
+export const CREATE_RECIPE_MUTATION = gql`
+  mutation CreateRecipeMutation($name: String, $steps: [String!]) {
+    createRecipe(
+      name: $name
+      steps: $steps
+    ) {
+      id
+      name
+      steps
+    }
   }
 `
 

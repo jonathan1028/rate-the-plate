@@ -10,6 +10,7 @@ import { WebSocketLink } from 'apollo-link-ws'
 // import { ApolloLink, concat, split } from 'apollo-link'
 import { ApolloLink, split } from 'apollo-link'
 import { getMainDefinition } from 'apollo-utilities'
+import gql from 'graphql-tag'
 
 // Create an http link:
 const httpLink = new HttpLink({
@@ -54,6 +55,7 @@ const authMiddleware = new ApolloLink((operation, forward) => {
 })
 
 export const cache = new InMemoryCache(window.__APOLLO_STATE)
+// let nextId = 0
 
 const resolvers = {
   Mutation: {
@@ -66,7 +68,45 @@ const resolvers = {
       }
 
       return cache.writeData({ data })
+    },
+    addIngredient (_, { ingredient }, { cache }) {
+      const query = gql`
+        query {
+          ingredients @client 
+        }
+      `
+      const ingredients = cache.readQuery({ query }).ingredients.slice(0)
+      // const newIngredient = {
+      //   id,
+      //   name,
+      //   __typename: 'ProductTemplate'
+      // }
+      ingredients.push(ingredient)
+      cache.writeQuery({
+        query: query,
+        data: {ingredients: ingredients}
+      })
+      return null
     }
+  },
+  sampleAddIngredient (_, { id, name }, { cache }) {
+    const query = gql`
+      query {
+        ingredients @client 
+      }
+    `
+    const ingredients = cache.readQuery({ query }).ingredients.slice(0)
+    const newIngredient = {
+      id,
+      name,
+      __typename: 'ProductTemplate'
+    }
+    ingredients.push(newIngredient)
+    cache.writeQuery({
+      query: query,
+      data: {ingredients: ingredients}
+    })
+    return null
   }
 }
 
@@ -74,7 +114,9 @@ const stateLink = withClientState({
   cache,
   resolvers,
   defaults: {
-    isEditMode: true,
+    isEditMode: false,
+    showCreateRecipeModal: false,
+    ingredients: [],
     hello: {
       __typename: 'Hello',
       msg: 'world'

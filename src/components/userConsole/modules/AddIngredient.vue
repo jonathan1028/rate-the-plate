@@ -2,7 +2,7 @@
   <div class="container">
     <div class="v-select">
       <v-select
-        placeholder="Add Product"
+        placeholder="Add Ingredient"
         v-model="selected"
         label="name"
         :options="query">
@@ -26,11 +26,13 @@
 </template>
 
 <script>
-import { CREATE_PRODUCT_MUTATION, ALL_PRODUCTTEMPLATES_QUERY, MY_PRODUCTS_QUERY } from '../../../constants/graphql'
+import { ALL_PRODUCTTEMPLATES_QUERY } from '../../../constants/graphql'
 import vSelect from 'vue-select'
+// import { apolloClient } from '../../../apollo-client'
+import gql from 'graphql-tag'
 
 export default {
-  name: 'SelectProduct',
+  name: 'AddIngredient',
   components: {
     vSelect
   },
@@ -42,6 +44,7 @@ export default {
       category: '',
       unit: '',
       price: null,
+      ingredients: [],
       selected: ''
       // currentUserId: this.$store.state.auth.user.id
     }
@@ -54,41 +57,32 @@ export default {
         this.query = data.allProductTemplates
         // this.isEditMode = data.isEditMode
       }
-    }
+    },
+    ingredients: gql`
+      query {
+        ingredients @client
+      }
+    `
   },
   methods: {
     submit () {
-      console.log('Selected', this.selected)
-      console.log('Shopping List Id', this.$route.params.id)
-      // let price = parseFloat(this.price)
+      console.log('Ingredients3', this.ingredients)
+      let newArray = this.ingredients.slice(0)
+      // console.log('NewArray', newArray)
+      newArray.push(this.selected)
+      // // apolloClient.writeData({ data: { showCreateRecipeModal: false } })
+      // let data = {ingredients: newArray}
+      // apolloClient.writeData({ data })
+      console.log('Ingredients', newArray)
       this.$apollo.mutate({
-        mutation: CREATE_PRODUCT_MUTATION,
+        mutation: gql`
+          mutation($ingredient: JSON) {
+            addIngredient(ingredient: $ingredient) @client
+          }
+        `,
         variables: {
-          templateId: this.selected.id,
-          shoppingListId: this.$route.params.id
-        },
-        update: (store, { data: { createProduct } }) => {
-          // Pull data from the stored query
-          const data = store.readQuery({
-            query: MY_PRODUCTS_QUERY,
-            variables: {
-              shoppingListId: this.$route.params.id
-            }
-          })
-          // We add the new data
-          data.allProducts.push(createProduct)
-          console.log('Test', data)
-          // We update the cache
-          store.writeQuery({
-            query: MY_PRODUCTS_QUERY,
-            variables: {
-              shoppingListId: this.$route.params.id
-            },
-            data: data
-          })
+          ingredient: this.selected
         }
-      }).catch((error) => {
-        console.error(error)
       })
     }
   }

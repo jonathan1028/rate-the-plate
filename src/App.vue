@@ -70,26 +70,26 @@ form > button{
 }
 
 label {
-  width: 30%;
-  display: block;
-  text-align: right;
-  padding-right: 5%;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
+  // width: 30%;
+  // display: block;
+  // text-align: right;
+  // padding-right: 5%;
+  // display: flex;
+  // align-items: center;
+  // justify-content: flex-end;
 }
 
 .field {
-  width: 50%;
-  margin-bottom: 1%;
-  display: flex;
-  align-items: center;
+  // width: 50%;
+  // margin-bottom: 1%;
+  // display: flex;
+  // align-items: center;
 }
 
 input{
-  width: 70%;
-  border: .5px solid lightgray;
-  padding: 1%;
+  // width: 70%;
+  // border: .5px solid lightgray;
+  // padding: 1%;
 }
 
 input:hover{
@@ -109,5 +109,16 @@ button:hover{
   -webkit-box-shadow:0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
   -moz-box-shadow:0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
   box-shadow:0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
+}
+
+._box-shadow1 {
+  -webkit-box-shadow: 0 .25vh 1vh #777;
+  -moz-box-shadow: 0 .25vh 1vh #777;
+  box-shadow: 0 .25vh 1vh #777;
+}
+._box-shadow2 {
+  -webkit-box-shadow: 0 .25vh 1vh #777;
+  -moz-box-shadow: 0 .25vh 1vh #777;
+  box-shadow: 0 .25vh 1vh #777;
 }
 </style>

@@ -1,5 +1,5 @@
 # project: cjgn20e3o4i1w0105pjn3t5p6
-# version: 14
+# version: 23
 
 type AuthenticateUserPayload @model {
   id: ID! @isUnique
@@ -104,13 +104,22 @@ type Product @model {
   id: ID! @isUnique
   createdAt: DateTime!
   updatedAt: DateTime!
-  name: String
   inCart: Boolean
+  quantity: Float
+  shoppingList: ShoppingList @relation(name: "ProductsOnList")
+  recipe: Recipe @relation(name: "ProductsOnRecipe")
+  template: ProductTemplate @relation(name: "ProductTemplateOnProduct")
+}
+
+type ProductTemplate @model {
+  id: ID! @isUnique
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  name: String
   price: Float
   category: String
   unit: String
-  shoppingList: ShoppingList @relation(name: "ProductsOnList")
-  recipes: [Recipe!]! @relation(name: "ProductsOnRecipe")
+  products: [Product!]! @relation(name: "ProductTemplateOnProduct")
 }
 
 type Recipe @model {
@@ -118,8 +127,8 @@ type Recipe @model {
   createdAt: DateTime!
   updatedAt: DateTime!
   name: String
-  ingredients: [Product!]! @relation(name: "ProductsOnRecipe")
   steps: [String!]
+  ingredients: [Product!]! @relation(name: "ProductsOnRecipe")
 }
 
 type ShoppingList @model {

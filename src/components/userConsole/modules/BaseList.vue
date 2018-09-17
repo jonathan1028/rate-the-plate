@@ -17,7 +17,7 @@
                 @change="update(row)"
                 class="checkbox"
                 type="checkbox">
-              {{row.name}}
+              {{row.template.name}}
               <button
                 @click="deleteObject(row)"
               >X</button>
@@ -51,7 +51,7 @@
 <script>
 import { MY_PRODUCTS_QUERY, UPDATE_PRODUCT_MUTATION, DELETE_PRODUCT_MUTATION } from '../../../constants/graphql'
 export default {
-  name: 'UserTable',
+  name: 'BaseList',
   props: {
     data: Array,
     columns: Array,

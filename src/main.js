@@ -25,7 +25,7 @@ Vue.filter('relativeTime', function (value) {
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
-  provide: apolloProvider.provide(),
+  apolloProvider,
   router,
   store,
   data: {
