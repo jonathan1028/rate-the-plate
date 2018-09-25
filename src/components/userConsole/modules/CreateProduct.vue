@@ -4,22 +4,22 @@
     <div class="field">
       <label for="">Name:</label>
       <input
-        v-model="name"
+        v-model="Product.name"
         type="text"
         placeholder="">
       <label for="">Category:</label>
       <input
-        v-model="category"
+        v-model="Product.category"
         type="text"
         placeholder="">
       <label for="">Price:</label>
       <input
-        v-model="price"
+        v-model="Product.price"
         type="text"
         placeholder="">
       <label for="">Unit:</label>
       <input
-        v-model="unit"
+        v-model="Product.unit"
         type="text"
         placeholder="">
       <button class="_button1"
@@ -39,28 +39,31 @@ export default {
   data () {
     return {
       User: {},
-      name: '',
-      category: '',
-      unit: '',
-      price: null
+      Product: {
+        name: '',
+        category: '',
+        unit: '',
+        price: null
+      }
       // currentUserId: this.$store.state.auth.user.id
     }
   },
   methods: {
     submit () {
       // console.log('Shopping List Id', this.$route.params.id)
-      let price = parseFloat(this.price)
+      let price = parseFloat(this.Product.price)
       this.$apollo.mutate({
         mutation: CREATE_PRODUCTTEMPLATE_MUTATION,
         variables: {
-          name: this.name,
-          category: this.category,
-          unit: this.unit,
+          name: this.Product.name,
+          category: this.Product.category,
+          unit: this.Product.unit,
           price: price,
           template: true
         },
         update: (store, { data: { createProductTemplate } }) => {
           // Pull data from the stored query
+          console.log('Store from Products', store)
           const data = store.readQuery({
             query: ALL_PRODUCTTEMPLATES_QUERY
           })
@@ -72,6 +75,7 @@ export default {
             query: ALL_PRODUCTTEMPLATES_QUERY,
             data: data
           })
+          this.Product = {}
         }
       }).catch((error) => {
         console.error(error)

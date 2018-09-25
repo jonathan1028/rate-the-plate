@@ -8,7 +8,9 @@
       <base-list
         :data="query"
         :columns="columns"
-        :filter-key="searchQuery">
+        :filter-key="searchQuery"
+        :deleteMutation="deleteMutation"
+        >
       </base-list>
     </div>
   </div>
@@ -16,7 +18,7 @@
 
 <script>
 import BaseList from '../modules/BaseList'
-import { MY_PRODUCTS_QUERY } from '../../../constants/graphql'
+import { MY_PRODUCTS_QUERY, DELETE_PRODUCT_MUTATION } from '../../../constants/graphql'
 export default {
   name: 'ProductList',
   components: {
@@ -31,7 +33,8 @@ export default {
         {dbField: 'template', title: 'name'},
         {dbField: 'id', title: 'id'},
         {dbField: 'createdAt', title: 'createdAt'}
-      ]
+      ],
+      deleteMutation: DELETE_PRODUCT_MUTATION
     }
   },
   apollo: {

@@ -1,12 +1,26 @@
 <template>
   <div class="page">
     <div class="field">
-      <h1>{{recipe.name}}</h1>
+      <span v-if="!isEditMode">
+        <h1>{{Recipe.name}}</h1>
+      </span>
+      <span v-if="isEditMode">
+        <h1>
+          <div class="name">
+            <input
+              v-model="Recipe.name"
+              type="text"
+              placeholder="Recipe Name">
+          </div>
+        </h1>
+      </span>
     </div>
     <button
       @click="toggleEditMode"
-    >Edit</button>
-    <div>{{isEditMode}}</div>
+    >
+    <span v-if="isEditMode">View</span>
+    <span v-if="!isEditMode">Edit</span>
+    </button>
     <div>
       <div>Ingredients</div>
       <div
@@ -37,12 +51,16 @@
       </div>
       <ul>
         <div
-          v-for='(row, index) in ingredients'
+          v-for='(row, index) in Recipe.ingredients'
           :key='index'
         >
           <div>
             - {{`${row.quantity} ${row.template.unit}`}} {{row.template.name}}
             <!-- - {{`${row.quantity} ${row.unit} ${row.name}`}} -->
+            <button
+              v-if="isEditMode"
+              @click="deleteIngredient(row)"
+            >X</button>
           </div>
         </div>
       </ul>
@@ -62,11 +80,15 @@
       </div>
       <ul>
         <div
-          v-for='(row, index) in recipe.steps'
+          v-for='(row, index) in Recipe.steps'
           :key='index'
         >
           <div>
             - {{row}}
+            <button
+              v-if="isEditMode"
+              @click="deleteStep(row)"
+            >X</button>
             <!-- - {{`${row.quantity} ${row.unit} ${row.name}`}} -->
           </div>
         </div>
@@ -84,7 +106,7 @@
 <script>
 import SelectProduct from '../modules/SelectProduct'
 import ProductList from '../modules/ProductList'
-import { ALL_PRODUCTTEMPLATES_QUERY } from '../../../constants/graphql'
+import { GET_RECIPE_QUERY, ALL_PRODUCTTEMPLATES_QUERY, CREATE_PRODUCT_MUTATION, MY_RECIPES_QUERY, UPDATE_RECIPE_MUTATION, DELETE_PRODUCT_MUTATION } from '../../../constants/graphql'
 import gql from 'graphql-tag'
 import { apolloClient } from '../../../apollo-client'
 import vSelect from 'vue-select'
@@ -94,19 +116,25 @@ export default {
   components: {
     vSelect, SelectProduct, ProductList
   },
-  beforeCreate () {
-    this.recipe = JSON.parse(localStorage.getItem('recipe'))
-    this.id = this.$route.params.id
-    console.log('User', this.user, this.id)
-    console.log('Recipe', this.recipe)
-  },
+  // beforeCreate () {
+  //   // this.recipe = JSON.parse(localStorage.getItem('recipe'))
+  //   this.id = this.$route.params.id
+  //   console.log('User', this.user, this.id)
+  //   console.log('Recipe', this.recipe)
+  // },
   data () {
     return {
-      ingredients: this.recipe.ingredients,
+      // name: this.recipe.name,
+      // ingredients: this.recipe.ingredients,
       query: [],
+      // steps: this.recipe.steps || [],
+      newStep: '',
       isEditMode: false,
       selected: '',
-      quantity: null
+      quantity: null,
+      Recipe: {
+      },
+      userId: this.$store.state.auth.userId
       // unit: ''
     }
   },
@@ -120,6 +148,28 @@ export default {
         // this.isEditMode = data.isEditMode
       }
     },
+    allRecipes: {
+      query: MY_RECIPES_QUERY,
+      variables () {
+        return {
+          ownedById: this.$store.state.auth.userId
+        }
+      }
+    },
+    Recipe: {
+      query: GET_RECIPE_QUERY,
+      variables () {
+        return {
+          id: this.$route.params.id
+        }
+      },
+      result ({ data }) {
+        console.log('Recipes data', data)
+        // Sets variable query to the gql data for a more modular UI template
+        this.Recipe = JSON.parse(JSON.stringify(data.Recipe))
+        // this.isEditMode = data.isEditMode
+      }
+    },
     isEditMode: gql`
       query {
         isEditMode @client
@@ -128,10 +178,11 @@ export default {
   },
   methods: {
     toggleEditMode () {
-      apolloClient.writeData({ data: { isEditMode: true } })
+      apolloClient.writeData({ data: { isEditMode: !this.isEditMode } })
     },
-    save () {
-      apolloClient.writeData({ data: { isEditMode: false } })
+    add () {
+      this.Recipe.steps.push(this.newStep)
+      this.newStep = ''
     },
     addIngredient () {
       console.log('Enter', this.selected)
@@ -141,29 +192,47 @@ export default {
         unit: this.selected.unit || '',
         name: this.selected.name || ''
       }
-      this.ingredients.push(newIngredient)
-      console.log('New Ingredients', this.ingredients)
+      this.Recipe.ingredients.push(newIngredient)
+      console.log('New Ingredients', this.Recipe.ingredients)
     },
-    submit () {
-      console.log('Modal Items', this.name, this.steps)
+    save () {
+      let recipe = {
+        id: this.$route.params.id,
+        name: this.Recipe.name,
+        steps: this.Recipe.steps,
+        ingredients: this.Recipe.ingredients
+
+      }
+      console.log('Updated Recipe', recipe)
       this.$apollo.mutate({
         mutation: UPDATE_RECIPE_MUTATION,
         variables: {
-          id: this.$route.params.id,
-          name: this.name,
-          steps: this.steps
+          id: recipe.id,
+          name: recipe.name,
+          steps: recipe.steps
         },
-        update: (cache, { data: { createRecipe } }) => {
+        update: (cache, { data: { updateRecipe } }) => {
           // Pull data from the stored query
+          console.log('Test, test, test', cache)
           const data = cache.readQuery({
-            query: ALL_RECIPES_QUERY
+            query: MY_RECIPES_QUERY,
+            variables: {
+              ownedById: this.userId
+            }
           })
-          // We add the new data
-          data.allRecipes.push(createRecipe)
-          console.log('Test', data)
+          console.log('Data in store', data)
+          // Delete the current person and replace it with a copay
+          let index = data.allRecipes.findIndex(x => x.id === this.$route.params.id)
+          if (index !== -1) {
+            data.allRecipes[index] = updateRecipe
+          }
+          console.log('Data', data)
           // We update the cache
           cache.writeQuery({
-            query: ALL_RECIPES_QUERY,
+            query: MY_RECIPES_QUERY,
+            variables: {
+              ownedById: this.userId
+            },
             data: data
           })
         }
@@ -172,21 +241,41 @@ export default {
       }).then((result) => {
         // Clone product from ingredients list
         // Attach Product to Recipe
-        console.log('Ingredients after recipe creation', this.ingredients)
-        this.ingredients.forEach((row) => {
-          this.$apollo.mutate({
-            mutation: CREATE_PRODUCT_MUTATION,
-            variables: {
-              templateId: row.id,
-              recipeId: result.data.createRecipe.id,
-              quantity: row.quantity
-            }
-          }).catch((error) => {
-            console.error(error)
-          })
+        // console.log('Ingredients after recipe creation', this.ingredients)
+        this.Recipe.ingredients.forEach((row) => {
+          if (row.__typename === 'ProductTemplate') {
+            this.$apollo.mutate({
+              mutation: CREATE_PRODUCT_MUTATION,
+              variables: {
+                templateId: row.id,
+                recipeId: this.$route.params.id,
+                quantity: row.quantity
+              }
+            }).catch((error) => {
+              console.error(error)
+            })
+          }
         })
       })
-      apolloClient.writeData({ data: { showCreateRecipeModal: false } })
+      apolloClient.writeData({ data: { isEditMode: false } })
+    },
+    deleteIngredient (row) {
+      let index = this.Recipe.ingredients.indexOf(row)
+      this.Recipe.ingredients.splice(index, 1)
+      this.$apollo.mutate({
+        mutation: DELETE_PRODUCT_MUTATION,
+        variables: {
+          id: row.id
+        }
+      }).catch((error) => {
+        console.error(error)
+      })
+      console.log('Updated ingredients', index, this.ingredients)
+    },
+    deleteStep (row) {
+      let index = this.Recipe.steps.indexOf(row)
+      this.Recipe.steps.splice(index, 1)
+      console.log('Updated steps', index, this.steps)
     }
   }
 }

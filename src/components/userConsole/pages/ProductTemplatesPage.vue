@@ -6,23 +6,24 @@
       <form class="search">
         <input name="query" v-model="searchQuery" placeholder="Search">
       </form>
-      <base-table
+      <product-templates-table
         :data="query"
         :columns="columns"
-        :filter-key="searchQuery">
-      </base-table>
+        :filter-key="searchQuery"
+        >
+      </product-templates-table>
     </div>
   </div>
 </template>
 
 <script>
-import BaseTable from '../modules/BaseTable'
+import ProductTemplatesTable from '../modules/ProductTemplatesTable'
 import CreateProduct from '../modules/CreateProduct'
 import { ALL_PRODUCTTEMPLATES_QUERY } from '../../../constants/graphql'
 export default {
-  name: 'ProductsPage',
+  name: 'ProductTemplatesPage',
   components: {
-    BaseTable, CreateProduct
+    ProductTemplatesTable, CreateProduct
   },
   data () {
     return {

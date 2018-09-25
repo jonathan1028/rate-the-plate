@@ -119,6 +119,29 @@ export const CREATE_PRODUCTTEMPLATE_MUTATION = gql`
     }
   }
 `
+export const UPDATE_PRODUCTTEMPLATE_MUTATION = gql`
+  mutation UpdateProductTemplateMutation($id: ID!, $name: String, $category: String, $unit: String, $price: Float ) {
+    updateProductTemplate(
+      id: $id
+      name: $name
+      category: $category
+      unit: $unit
+      price: $price
+    ) {
+      id
+    }
+  }
+`
+
+export const DELETE_PRODUCTTEMPLATE_MUTATION = gql`
+  mutation DeleteProductTemplateMutation($id: ID!) {
+    deleteProductTemplate(
+      id: $id,
+    ) {
+      id
+    }
+  }
+`
 
 // ----------------------------------------- Products ---------------------------------------------
 export const ALL_PRODUCTS_QUERY = gql`
@@ -191,7 +214,8 @@ export const DELETE_PRODUCT_MUTATION = gql`
 // ----------------------------------------- Recipes ---------------------------------------------
 export const ALL_RECIPES_QUERY = gql`
   query AllRecipesQuery {
-    allRecipes {
+    allRecipes
+    {
       id
       name
       steps
@@ -204,21 +228,116 @@ export const ALL_RECIPES_QUERY = gql`
           category
         }
       }
+      ownedBy{
+        id
+      }
     }
-    isEditMode @ client
-    ingredients @ client
+  }
+`
+
+export const MY_RECIPES_QUERY = gql`
+  query AllRecipesQuery ($ownedById: ID!){
+    allRecipes (filter: {ownedBy: {id: $ownedById}})
+    {
+      id
+      name
+      steps
+      ingredients {
+        id
+        quantity
+        template {
+          name
+          unit
+          category
+        }
+      }
+      ownedBy{
+        id
+      }
+    }
+  }
+`
+
+export const GET_RECIPE_QUERY = gql`
+  query Recipe ($id: ID!){
+    Recipe (id: $id){
+      id
+      name
+      steps
+      ingredients {
+        id
+        quantity
+        template {
+          name
+          unit
+          category
+        }
+      }
+      ownedBy {
+        id
+      }
+    }
   }
 `
 
 export const CREATE_RECIPE_MUTATION = gql`
-  mutation CreateRecipeMutation($name: String, $steps: [String!]) {
+  mutation CreateRecipeMutation($ownedById: ID!, $name: String, $steps: [String!]) {
     createRecipe(
+      ownedById: $ownedById
       name: $name
       steps: $steps
     ) {
       id
       name
       steps
+      ingredients {
+        id
+        quantity
+        template {
+          name
+          unit
+          category
+        }
+      }
+      ownedBy {
+        id
+      }
+    }
+  }
+`
+
+export const UPDATE_RECIPE_MUTATION = gql`
+  mutation UpdateRecipeMutation($id: ID!,  $name: String, $steps: [String!]!) {
+    updateRecipe(
+      id: $id,
+      name: $name
+      steps: $steps
+    ) {
+      id
+      name
+      steps
+      ingredients {
+        id
+        quantity
+        template {
+          name
+          unit
+          category
+        }
+      }
+      ownedBy {
+        id
+      }
+    }
+  }
+`
+
+export const DELETE_RECIPE_MUTATION = gql`
+  mutation DeleteRecipeMutation($id: ID!) {
+    deleteRecipe(
+      id: $id,
+    ) {
+      id
     }
   }
 `

@@ -46,10 +46,11 @@
           :key='index'
         >
           <div>
-            {{row.name}}
+            <!-- {{row.name}} -->
+            {{`${row.quantity} ${row.unit}`}} {{row.name}}
             <!-- - {{`${row.quantity} ${row.unit} ${row.name}`}} -->
             <button
-              @click="deleteObject(row)"
+              @click="deleteIngredient(row)"
             >X</button>
           </div>
         </div>
@@ -74,7 +75,7 @@
           <div>
             - {{row}}
             <button
-              @click="deleteObject(row)"
+              @click="deleteStep(row)"
             >X</button>
           </div>
         </div>
@@ -97,7 +98,7 @@
 </template>
 
 <script>
-import { ALL_RECIPES_QUERY, CREATE_RECIPE_MUTATION, CREATE_PRODUCT_MUTATION, ALL_PRODUCTTEMPLATES_QUERY } from '../../../constants/graphql'
+import { MY_RECIPES_QUERY, CREATE_RECIPE_MUTATION, CREATE_PRODUCT_MUTATION, ALL_PRODUCTTEMPLATES_QUERY } from '../../../constants/graphql'
 // import { GET_USER_QUERY } from '../../../constants/graphql/users'
 import { apolloClient } from '../../../apollo-client'
 import AddIngredient from '../modules/AddIngredient'
@@ -118,7 +119,8 @@ export default {
       quantity: null,
       query: [{label: 'Cookies', value: 'Cookies'}, {label: 'Broccoli', value: 'Broccoli'}],
       ingredients: [],
-      steps: []
+      steps: [],
+      userId: this.$store.state.auth.userId
       // ingredients: [{name: 'Bananas', quantity: 1, unit: 'lb'}, {name: 'Cookies', quantity: 3, unit: 'lb'}],
       // currentUserId: this.$store.state.auth.user.id
     }
@@ -136,6 +138,8 @@ export default {
   methods: {
     add () {
       this.steps.push(this.newStep)
+      this.newStep = ''
+      console.log('UserId', this.userId)
     },
     addIngredient () {
       this.selected['quantity'] = parseFloat(this.quantity)
@@ -146,26 +150,34 @@ export default {
       console.log('Ingredients2', this.ingredients)
     },
     submit () {
+      console.log('UserId', this.userId)
       console.log('Modal Items', this.name, this.steps)
       this.$apollo.mutate({
         mutation: CREATE_RECIPE_MUTATION,
         variables: {
+          ownedById: this.userId,
           name: this.name,
           steps: this.steps
         },
-        update: (cache, { data: { createRecipe } }) => {
+        update: (store, { data: { createRecipe } }) => {
           // Pull data from the stored query
-          const data = cache.readQuery({
-            query: ALL_RECIPES_QUERY
+          console.log('Store from CreateREcipe', store)
+          const data = store.readQuery({
+            query: MY_RECIPES_QUERY,
+            variables: {
+              ownedById: this.userId
+            }
           })
           // We add the new data
           data.allRecipes.push(createRecipe)
           console.log('Test', data)
           // We update the cache
-          cache.writeQuery({
-            query: ALL_RECIPES_QUERY,
-            data: data
-          })
+          store.writeQuery({
+            query: MY_RECIPES_QUERY,
+            variables: {
+              ownedById: this.userId
+            },
+            data: data })
         }
       }).catch((error) => {
         console.error(error)
@@ -187,6 +199,16 @@ export default {
         })
       })
       apolloClient.writeData({ data: { showCreateRecipeModal: false } })
+    },
+    deleteIngredient (row) {
+      let index = this.ingredients.indexOf(row)
+      this.ingredients.splice(index, 1)
+      console.log('Updated ingredients', index, this.ingredients)
+    },
+    deleteStep (row) {
+      let index = this.steps.indexOf(row)
+      this.steps.splice(index, 1)
+      console.log('Updated ingredients', index, this.ingredients)
     }
   }
 }
@@ -197,17 +219,19 @@ export default {
   position: fixed; /* Stay in place */
   z-index: 1; /* Sit on top */
   left: 24.25vw;
-  top: 15vh;
+  top: 10vh;
   width: 45vw; /* Full width */
   height: auto; /* Full height */
+  max-height: 70vh;
   margin-left: auto;
   margin-right: auto;
   padding: 5vh;
-  // overflow: auto; /* Enable scroll if needed */
+  overflow: auto; /* Enable scroll if needed */
   opacity: 1;
   background-color: #fefefe;
   animation-name: animatetop;
   animation-duration: 0.4s
+  // overflow-y: scroll;
 }
 .modal-header {
   border-bottom: .15vh solid var(--theme-color1);

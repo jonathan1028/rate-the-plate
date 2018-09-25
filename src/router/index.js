@@ -15,7 +15,11 @@ import ReadExpense from '../components/userConsole/expenses/ReadExpense'
 import UpdateExpense from '../components/userConsole/expenses/UpdateExpense'
 import VendorsPage from '../components/userConsole/pages/VendorsPage'
 import ShoppingListsPage from '../components/userConsole/pages/ShoppingListsPage'
-import ProductsPage from '../components/userConsole/pages/ProductsPage'
+
+// Products
+import ProductTemplatesPage from '../components/userConsole/pages/ProductTemplatesPage'
+import ProductTemplateUpdatePage from '../components/userConsole/pages/ProductTemplateUpdatePage'
+
 import ReadShoppingListPage from '../components/userConsole/pages/ReadShoppingListPage'
 import RecipesPage from '../components/userConsole/pages/RecipesPage'
 import RecipePage from '../components/userConsole/pages/RecipePage'
@@ -118,7 +122,14 @@ const router = new Router({
         },
         {
           path: '/products',
-          component: ProductsPage,
+          component: ProductTemplatesPage,
+          meta: {
+            requiresAuth: true
+          }
+        },
+        {
+          path: '/product/:id',
+          component: ProductTemplateUpdatePage,
           meta: {
             requiresAuth: true
           }

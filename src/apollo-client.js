@@ -10,7 +10,7 @@ import { WebSocketLink } from 'apollo-link-ws'
 // import { ApolloLink, concat, split } from 'apollo-link'
 import { ApolloLink, split } from 'apollo-link'
 import { getMainDefinition } from 'apollo-utilities'
-import gql from 'graphql-tag'
+// import gql from 'graphql-tag'
 
 // Create an http link:
 const httpLink = new HttpLink({
@@ -54,60 +54,68 @@ const authMiddleware = new ApolloLink((operation, forward) => {
   return forward(operation)
 })
 
-export const cache = new InMemoryCache(window.__APOLLO_STATE)
-// let nextId = 0
+// export const cache = new InMemoryCache(window.__APOLLO_STATE)
+// Explanation of cacheRedirects: https://www.apollographql.com/docs/react/advanced/caching.html#cacheRedirect
+export const cache = new InMemoryCache({
+  cacheRedirects: {
+    Query: {
+      Recipe: (_, args, { getCacheKey }) =>
+        getCacheKey({ __typename: 'Recipe', id: args.id })
+    }
+  }
+})
 
 const resolvers = {
-  Mutation: {
-    updateHello (_, { message }, { cache }) {
-      const data = {
-        hello: {
-          __typename: 'Hello',
-          msg: message
-        }
-      }
+  // Mutation: {
+  //   updateHello (_, { message }, { cache }) {
+  //     const data = {
+  //       hello: {
+  //         __typename: 'Hello',
+  //         msg: message
+  //       }
+  //     }
 
-      return cache.writeData({ data })
-    },
-    addIngredient (_, { ingredient }, { cache }) {
-      const query = gql`
-        query {
-          ingredients @client 
-        }
-      `
-      const ingredients = cache.readQuery({ query }).ingredients.slice(0)
-      // const newIngredient = {
-      //   id,
-      //   name,
-      //   __typename: 'ProductTemplate'
-      // }
-      ingredients.push(ingredient)
-      cache.writeQuery({
-        query: query,
-        data: {ingredients: ingredients}
-      })
-      return null
-    }
-  },
-  sampleAddIngredient (_, { id, name }, { cache }) {
-    const query = gql`
-      query {
-        ingredients @client 
-      }
-    `
-    const ingredients = cache.readQuery({ query }).ingredients.slice(0)
-    const newIngredient = {
-      id,
-      name,
-      __typename: 'ProductTemplate'
-    }
-    ingredients.push(newIngredient)
-    cache.writeQuery({
-      query: query,
-      data: {ingredients: ingredients}
-    })
-    return null
-  }
+  //     return cache.writeData({ data })
+  //   },
+  //   addIngredient (_, { ingredient }, { cache }) {
+  //     const query = gql`
+  //       query {
+  //         ingredients @client
+  //       }
+  //     `
+  //     const ingredients = cache.readQuery({ query }).ingredients.slice(0)
+  //     // const newIngredient = {
+  //     //   id,
+  //     //   name,
+  //     //   __typename: 'ProductTemplate'
+  //     // }
+  //     ingredients.push(ingredient)
+  //     cache.writeQuery({
+  //       query: query,
+  //       data: {ingredients: ingredients}
+  //     })
+  //     return null
+  //   }
+  // },
+  // sampleAddIngredient (_, { id, name }, { cache }) {
+  //   const query = gql`
+  //     query {
+  //       ingredients @client
+  //     }
+  //   `
+  //   const ingredients = cache.readQuery({ query }).ingredients.slice(0)
+  //   const newIngredient = {
+  //     id,
+  //     name,
+  //     __typename: 'ProductTemplate'
+  //   }
+  //   ingredients.push(newIngredient)
+  //   cache.writeQuery({
+  //     query: query,
+  //     data: {ingredients: ingredients}
+  //   })
+  //   return null
+  // }
 }
 
 const stateLink = withClientState({
@@ -116,7 +124,7 @@ const stateLink = withClientState({
   defaults: {
     isEditMode: false,
     showCreateRecipeModal: false,
-    ingredients: [],
+    showDeleteRecipeModal: false,
     hello: {
       __typename: 'Hello',
       msg: 'world'

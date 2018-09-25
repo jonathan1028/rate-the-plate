@@ -29,7 +29,6 @@ export default {
       searchQuery: '',
       columns: [
         {dbField: 'name', title: 'name'},
-        {dbField: 'id', title: 'id'},
         {dbField: 'createdAt', title: 'createdAt'}
       ]
     }

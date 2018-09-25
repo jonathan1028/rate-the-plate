@@ -59,15 +59,14 @@
 </template>
 
 <script>
-import { ALL_USERS_QUERY, DELETE_USER_MUTATION } from '../../../constants/graphql'
+import { DELETE_PRODUCTTEMPLATE_MUTATION } from '../../../constants/graphql'
 // import { GC_USER_ID } from '../../../constants/settings'
 export default {
-  name: 'UserTable',
+  name: 'ProductTemplatesTable',
   props: {
     data: Array,
     columns: Array,
-    filterKey: String,
-    deleteMutation: Object
+    filterKey: String
   },
   data: function () {
     var sortOrders = {}
@@ -77,8 +76,7 @@ export default {
     })
     return {
       sortKey: '',
-      sortOrders: sortOrders,
-      mutation: DELETE_USER_MUTATION
+      sortOrders: sortOrders
     }
   },
   computed: {
@@ -137,32 +135,35 @@ export default {
       localStorage.setItem(obj.__typename.toLowerCase(), JSON.stringify(obj))
       this.$router.push({path: path})
     },
-    update (user) {
-      localStorage.setItem('user', JSON.stringify(user))
-      console.log('test1', JSON.parse(localStorage.getItem('user')))
-      this.$router.push({path: `/user/update/${user.id}`})
+    update (product) {
+      localStorage.setItem('product', JSON.stringify(product))
+      // console.log('test1', JSON.parse(localStorage.getItem('user')))
+      this.$router.push({path: `/product/${product.id}`})
     },
     deleteObject (obj) {
       console.log('This Mutatation', this.deleteMutation, this.columns, this.mutation)
-      this.$apollo.mutate({
-        mutation: this.deleteMutation,
-        variables: {
-          id: obj.id
-        },
-        update: (store, { data: { deleteObject } }) => {
-          // Read the data from our cache for this query.
-          const data = store.readQuery({ query: ALL_USERS_QUERY })
-          // Remove item from the list
-          const index = data.allUsers.findIndex(x => x.id === obj.id)
-          if (index !== -1) {
-            data.allUsers.splice(index, 1)
+      if (!obj.products) {
+        console.log('Template deleted')
+        this.$apollo.mutate({
+          mutation: DELETE_PRODUCTTEMPLATE_MUTATION,
+          variables: {
+            id: obj.id
           }
-          // Take the modified data and write it back into the store.
-          store.writeQuery({ query: ALL_USERS_QUERY, data })
-        }
-      }).catch((error) => {
-        console.error(error)
-      })
+          // update: (store, { data: { deleteObject } }) => {
+          //   // Read the data from our cache for this query.
+          //   const data = store.readQuery({ query: ALL_USERS_QUERY })
+          //   // Remove item from the list
+          //   const index = data.allUsers.findIndex(x => x.id === obj.id)
+          //   if (index !== -1) {
+          //     data.allUsers.splice(index, 1)
+          //   }
+          //   // Take the modified data and write it back into the store.
+          //   store.writeQuery({ query: ALL_USERS_QUERY, data })
+          // }
+        }).catch((error) => {
+          console.error(error)
+        })
+      }
     }
   }
 }

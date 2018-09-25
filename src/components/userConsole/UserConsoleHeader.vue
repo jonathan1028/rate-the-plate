@@ -48,10 +48,13 @@
           </button>
         </div>
     </div>
-    <div
-      class="modalArea"
-      v-if="showCreateRecipeModal">
-      <create-recipe/>
+    <div class="modalArea">
+      <div v-if="showCreateRecipeModal">
+        <create-recipe/>
+      </div>
+      <div v-if="showDeleteRecipeModal">
+        <delete-recipe/>
+      </div>
     </div>
     <router-view></router-view>
   </div>
@@ -60,17 +63,19 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import CreateRecipe from './modals/CreateRecipe'
+import DeleteRecipe from './modals/DeleteRecipe'
 import gql from 'graphql-tag'
 
 export default {
   name: 'UserConsoleHeader',
   components: {
-    CreateRecipe
+    CreateRecipe, DeleteRecipe
   },
   data () {
     console.log('user', localStorage.getItem('user'))
     return {
       toggleCreateRecipeModal: false,
+      toggleDeleteRecipeModal: false,
       user: JSON.parse(localStorage.getItem('user'))
     }
   },
@@ -78,6 +83,11 @@ export default {
     showCreateRecipeModal: gql`
       query {
         showCreateRecipeModal @client
+      }
+    `,
+    showDeleteRecipeModal: gql`
+      query {
+        showDeleteRecipeModal @client
       }
     `
   },

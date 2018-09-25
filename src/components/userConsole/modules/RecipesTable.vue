@@ -67,8 +67,10 @@
 </template>
 
 <script>
-import { ALL_USERS_QUERY, DELETE_USER_MUTATION } from '../../../constants/graphql'
-import { GC_USER_ID } from '../../../constants/settings'
+import { DELETE_RECIPE_MUTATION, DELETE_PRODUCT_MUTATION, MY_RECIPES_QUERY } from '../../../constants/graphql'
+import { apolloClient } from '../../../apollo-client'
+import gql from 'graphql-tag'
+
 export default {
   name: 'RecipesTable',
   props: {
@@ -87,6 +89,13 @@ export default {
       sortOrders: sortOrders
     }
   },
+  apollo: {
+    deleteConfirmed: gql`
+      query {
+        deleteConfirmed @client
+      }
+    `
+  },
   computed: {
     filteredData: function () {
       var sortKey = this.sortKey
@@ -95,9 +104,7 @@ export default {
       var data = this.data
       if (filterKey) {
         data = data.filter(function (row) {
-          return Object.keys(row).some(function (key) {
-            return String(row[key]).toLowerCase().indexOf(filterKey) > -1
-          })
+          return String(row['name']).toLowerCase().indexOf(filterKey) > -1
         })
       }
       if (sortKey) {
@@ -143,31 +150,57 @@ export default {
       localStorage.setItem(obj.__typename.toLowerCase(), JSON.stringify(obj))
       this.$router.push({path: path})
     },
-    update (user) {
-      localStorage.setItem('user', JSON.stringify(user))
-      console.log('test1', JSON.parse(localStorage.getItem('user')))
-      this.$router.push({path: `/user/update/${user.id}`})
+    update (obj) {
+      apolloClient.writeData({ data: { isEditMode: true } })
+      let path = obj.__typename.toLowerCase() + '/' + obj.id
+      localStorage.setItem(obj.__typename.toLowerCase(), JSON.stringify(obj))
+      this.$router.push({path: path})
+    },
+    confirm (row) {
+      console.log('Confirm')
+      apolloClient.writeData({ data: { recipeToDelete: row } })
+      apolloClient.writeData({ data: { showDeleteRecipeModal: true } })
     },
     deleteObject (obj) {
+      // apolloClient.writeData({ data: { showDeleteRecipeModal: true } })
       console.log('Object', obj)
-      const currentUser = localStorage.getItem(GC_USER_ID)
-      console.log('Object', currentUser)
-      if (obj.id !== currentUser) {
+      let confirmed = confirm('Are you sure you want to delete this Recipe?')
+      if (confirmed) {
+        obj.ingredients.forEach(x => {
+          this.$apollo.mutate({
+            mutation: DELETE_PRODUCT_MUTATION,
+            variables: {
+              id: x.id
+            }
+          }).catch((error) => {
+            console.error(error)
+          })
+        })
         this.$apollo.mutate({
-          mutation: DELETE_USER_MUTATION,
+          mutation: DELETE_RECIPE_MUTATION,
           variables: {
             id: obj.id
           },
           update: (store, { data: { deleteObject } }) => {
             // Read the data from our cache for this query.
-            const data = store.readQuery({ query: ALL_USERS_QUERY })
+            const data = store.readQuery({
+              query: MY_RECIPES_QUERY,
+              variables: {
+                ownedById: this.$store.state.auth.userId
+              }
+            })
             // Remove item from the list
-            const index = data.allUsers.findIndex(x => x.id === obj.id)
+            const index = data.allRecipes.findIndex(x => x.id === obj.id)
             if (index !== -1) {
-              data.allUsers.splice(index, 1)
+              data.allRecipes.splice(index, 1)
             }
             // Take the modified data and write it back into the store.
-            store.writeQuery({ query: ALL_USERS_QUERY, data })
+            store.writeQuery({
+              query: MY_RECIPES_QUERY,
+              variables: {
+                ownedById: this.$store.state.auth.userId
+              },
+              data })
           }
         }).catch((error) => {
           console.error(error)
