@@ -60,7 +60,9 @@ export const cache = new InMemoryCache({
   cacheRedirects: {
     Query: {
       Recipe: (_, args, { getCacheKey }) =>
-        getCacheKey({ __typename: 'Recipe', id: args.id })
+        getCacheKey({ __typename: 'Recipe', id: args.id }),
+      ShoppingList: (_, args, { getCacheKey }) =>
+        getCacheKey({ __typename: 'ShoppingList', id: args.id })
     }
   }
 })
@@ -124,6 +126,7 @@ const stateLink = withClientState({
   defaults: {
     isEditMode: false,
     showCreateRecipeModal: false,
+    showCreateShoppingListModal: false,
     showDeleteRecipeModal: false,
     hello: {
       __typename: 'Hello',

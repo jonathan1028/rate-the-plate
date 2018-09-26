@@ -59,7 +59,7 @@
 </template>
 
 <script>
-import { ALL_USERS_QUERY, DELETE_USER_MUTATION } from '../../../constants/graphql'
+import { MY_SHOPPINGLISTS_QUERY, DELETE_USER_MUTATION, DELETE_PRODUCT_MUTATION } from '../../../constants/graphql'
 // import { GC_USER_ID } from '../../../constants/settings'
 export default {
   name: 'UserTable',
@@ -67,7 +67,8 @@ export default {
     data: Array,
     columns: Array,
     filterKey: String,
-    deleteMutation: Object
+    deleteMutation: Object,
+    gqlQuery: Object
   },
   data: function () {
     var sortOrders = {}
@@ -76,6 +77,7 @@ export default {
       sortOrders[key] = 1
     })
     return {
+      userId: this.$store.state.auth.userId,
       sortKey: '',
       sortOrders: sortOrders,
       mutation: DELETE_USER_MUTATION
@@ -101,6 +103,7 @@ export default {
           return (a === b ? 0 : a > b ? 1 : -1) * order
         })
       }
+      console.log('Data1', data)
       return data
     }
   },
@@ -143,26 +146,55 @@ export default {
       this.$router.push({path: `/user/update/${user.id}`})
     },
     deleteObject (obj) {
-      console.log('This Mutatation', this.deleteMutation, this.columns, this.mutation)
-      this.$apollo.mutate({
-        mutation: this.deleteMutation,
-        variables: {
-          id: obj.id
-        },
-        update: (store, { data: { deleteObject } }) => {
-          // Read the data from our cache for this query.
-          const data = store.readQuery({ query: ALL_USERS_QUERY })
-          // Remove item from the list
-          const index = data.allUsers.findIndex(x => x.id === obj.id)
-          if (index !== -1) {
-            data.allUsers.splice(index, 1)
-          }
-          // Take the modified data and write it back into the store.
-          store.writeQuery({ query: ALL_USERS_QUERY, data })
+      console.log('Delete', obj)
+      let confirmed = confirm('Are you sure you want to delete this Recipe?')
+      if (confirmed) {
+        console.log('Test Delete1', obj.products)
+        if (obj.products) {
+          obj.products.forEach(x => {
+            console.log('Item x', x)
+            this.$apollo.mutate({
+              mutation: DELETE_PRODUCT_MUTATION,
+              variables: {
+                id: x.id
+              }
+            }).catch((error) => {
+              console.error(error)
+            }).then((result) => {
+              console.log('Test Delete2', result)
+            })
+          })
         }
-      }).catch((error) => {
-        console.error(error)
-      })
+        this.$apollo.mutate({
+          mutation: this.deleteMutation,
+          variables: {
+            id: obj.id
+          },
+          update: (store, { data: { deleteObject } }) => {
+            // Read the data from our cache for this query.
+            console.log('Query', this.gqlQuery)
+            const data = store.readQuery({
+              query: MY_SHOPPINGLISTS_QUERY,
+              variables: {
+                ownedById: this.userId
+              }
+            })
+            // Remove item from the list
+            const index = data.allShoppingLists.findIndex(x => x.id === obj.id)
+            if (index !== -1) {
+              data.allShoppingLists.splice(index, 1)
+            }
+            // Take the modified data and write it back into the store.
+            store.writeQuery({ query: MY_SHOPPINGLISTS_QUERY,
+              variables: {
+                ownedById: this.userId
+              },
+              data })
+          }
+        }).catch((error) => {
+          console.error(error)
+        })
+      }
     }
   }
 }

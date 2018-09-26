@@ -67,16 +67,16 @@
 </template>
 
 <script>
-import { DELETE_RECIPE_MUTATION, DELETE_PRODUCT_MUTATION, MY_RECIPES_QUERY } from '../../../constants/graphql'
+import { DELETE_RECIPE_MUTATION, DELETE_PRODUCT_MUTATION, MY_RECIPES_QUERY, CREATE_PRODUCT_MUTATION, MY_SHOPPINGLISTS_QUERY } from '../../../constants/graphql'
 import { apolloClient } from '../../../apollo-client'
-import gql from 'graphql-tag'
 
 export default {
   name: 'RecipesTable',
   props: {
     data: Array,
     columns: Array,
-    filterKey: String
+    filterKey: String,
+    shoppingList: Object
   },
   data: function () {
     var sortOrders = {}
@@ -86,15 +86,19 @@ export default {
     })
     return {
       sortKey: '',
-      sortOrders: sortOrders
+      sortOrders: sortOrders,
+      userId: this.$store.state.auth.userId
     }
   },
   apollo: {
-    deleteConfirmed: gql`
-      query {
-        deleteConfirmed @client
+    allShoppingLists: {
+      query: MY_SHOPPINGLISTS_QUERY,
+      variables () {
+        return {
+          ownedById: this.$store.state.auth.userId
+        }
       }
-    `
+    }
   },
   computed: {
     filteredData: function () {
@@ -123,6 +127,42 @@ export default {
     }
   },
   methods: {
+    add (recipe) {
+      console.log('Add Recipe', this.shoppingList, recipe)
+
+      recipe.ingredients.forEach(x => {
+        console.log('Ingredient', x.template.name)
+        this.$apollo.mutate({
+          mutation: CREATE_PRODUCT_MUTATION,
+          variables: {
+            templateId: x.template.id,
+            shoppingListId: this.shoppingList.id,
+            quantity: x.quantity
+          },
+          update: (store, { data: { createProduct } }) => {
+            // Pull data from the stored query
+            const data = store.readQuery({
+              query: MY_SHOPPINGLISTS_QUERY,
+              variables: {
+                ownedById: this.userId
+              }
+            })
+            // We add the new data
+            let index = data.allShoppingLists.findIndex(x => x.id === this.shoppingList.id)
+            data.allShoppingLists[index]['products'].push(createProduct)
+            // We update the cache
+            store.writeQuery({
+              query: MY_SHOPPINGLISTS_QUERY,
+              variables: {
+                ownedById: this.userId
+              },
+              data: data })
+          }
+        }).catch((error) => {
+          console.error(error)
+        })
+      })
+    },
     getName (owner) {
       return owner.firstName + ' ' + owner.lastName
     },

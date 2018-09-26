@@ -10,11 +10,12 @@
     </div>
     <div class="qty">
       <input
+        v-model="quantity"
         type="text"
         placeholder="Qty">
     </div>
     <div class="unit">
-      {{selected.name}}
+      {{selected.unit}}
     </div>
     <!-- <label for="">Quantity:</label> -->
     <button class="_button1"
@@ -42,7 +43,9 @@ export default {
       category: '',
       unit: '',
       price: null,
-      selected: ''
+      selected: '',
+      quantity: ''
+
       // currentUserId: this.$store.state.auth.user.id
     }
   },
@@ -54,25 +57,40 @@ export default {
         this.query = data.allProductTemplates
         // this.isEditMode = data.isEditMode
       }
+    },
+    allProducts: {
+      query: MY_PRODUCTS_QUERY,
+      variables () {
+        return {
+          listId: this.$route.params.id
+        }
+      },
+      result ({ data }) {
+        // Sets variable query to the gql data for a more modular UI template
+        // this.query = data.allProductTemplates
+        // this.isEditMode = data.isEditMode
+      }
     }
   },
   methods: {
     submit () {
       console.log('Selected', this.selected)
       console.log('Shopping List Id', this.$route.params.id)
+      let quantity = parseFloat(this.quantity)
       // let price = parseFloat(this.price)
       this.$apollo.mutate({
         mutation: CREATE_PRODUCT_MUTATION,
         variables: {
           templateId: this.selected.id,
-          shoppingListId: this.$route.params.id
+          shoppingListId: this.$route.params.id,
+          quantity: quantity
         },
         update: (store, { data: { createProduct } }) => {
           // Pull data from the stored query
           const data = store.readQuery({
             query: MY_PRODUCTS_QUERY,
             variables: {
-              shoppingListId: this.$route.params.id
+              listId: this.$route.params.id
             }
           })
           // We add the new data
@@ -82,7 +100,7 @@ export default {
           store.writeQuery({
             query: MY_PRODUCTS_QUERY,
             variables: {
-              shoppingListId: this.$route.params.id
+              listId: this.$route.params.id
             },
             data: data
           })

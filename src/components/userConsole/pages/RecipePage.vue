@@ -21,8 +21,15 @@
     <span v-if="isEditMode">View</span>
     <span v-if="!isEditMode">Edit</span>
     </button>
+    <div>Rating: <span v-if="!isEditMode">{{Recipe.rating}}</span></div>
+    <div v-if="isEditMode">
+      <input
+        v-model="Recipe.rating"
+        type="number"
+        placeholder="">
+    </div>
     <div>
-      <div>Ingredients</div>
+      <div>Ingredients:</div>
       <div
         class="container"
         v-if="isEditMode">
@@ -66,7 +73,7 @@
       </ul>
     </div>
     <div>
-      <div>Steps</div>
+      <div>Steps:</div>
       <div v-if="isEditMode">
         <input
           v-model="newStep"
@@ -93,6 +100,20 @@
           </div>
         </div>
       </ul>
+    </div>
+    <div>
+      <div>Notes:</div>
+      <div v-if="isEditMode">
+        <textarea
+          v-model="Recipe.notes"
+          rows="10"
+          columns="40"
+          placeholder="">
+        </textarea>
+      </div>
+      <div v-if="!isEditMode">
+        {{Recipe.notes}}
+      </div>
     </div>
     <button
       v-if="isEditMode"
@@ -196,10 +217,13 @@ export default {
       console.log('New Ingredients', this.Recipe.ingredients)
     },
     save () {
+      let rating = parseFloat(this.Recipe.rating)
       let recipe = {
         id: this.$route.params.id,
         name: this.Recipe.name,
         steps: this.Recipe.steps,
+        notes: this.Recipe.notes,
+        rating: rating,
         ingredients: this.Recipe.ingredients
 
       }
@@ -209,7 +233,9 @@ export default {
         variables: {
           id: recipe.id,
           name: recipe.name,
-          steps: recipe.steps
+          steps: recipe.steps,
+          notes: recipe.notes,
+          rating: rating
         },
         update: (cache, { data: { updateRecipe } }) => {
           // Pull data from the stored query

@@ -52,6 +52,9 @@
       <div v-if="showCreateRecipeModal">
         <create-recipe/>
       </div>
+      <div v-if="showCreateShoppingListModal">
+        <create-shopping-list/>
+      </div>
       <div v-if="showDeleteRecipeModal">
         <delete-recipe/>
       </div>
@@ -63,13 +66,14 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import CreateRecipe from './modals/CreateRecipe'
+import CreateShoppingList from './modals/CreateShoppingList'
 import DeleteRecipe from './modals/DeleteRecipe'
 import gql from 'graphql-tag'
 
 export default {
   name: 'UserConsoleHeader',
   components: {
-    CreateRecipe, DeleteRecipe
+    CreateRecipe, CreateShoppingList, DeleteRecipe
   },
   data () {
     console.log('user', localStorage.getItem('user'))
@@ -83,6 +87,11 @@ export default {
     showCreateRecipeModal: gql`
       query {
         showCreateRecipeModal @client
+      }
+    `,
+    showCreateShoppingListModal: gql`
+      query {
+        showCreateShoppingListModal @client
       }
     `,
     showDeleteRecipeModal: gql`

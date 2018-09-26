@@ -79,10 +79,59 @@ export const ALL_SHOPPINGLISTS_QUERY = gql`
   }
 `
 
+export const MY_SHOPPINGLISTS_QUERY = gql`
+  query AllShoppingListsQuery ($ownedById: ID!){
+    allShoppingLists (filter: {ownedBy: {id: $ownedById}})
+    {
+      id
+      name
+      ownedBy {
+        id
+      }
+      products {
+        id
+      }
+    }
+  }
+`
+
+export const GET_SHOPPINGLIST_QUERY = gql`
+  query ShoppingList ($id: ID!){
+    ShoppingList (id: $id){
+      id
+      name
+      ownedBy {
+        id
+      }
+      products {
+        id
+      }
+    }
+  }
+`
+
 export const CREATE_SHOPPINGLIST_MUTATION = gql`
-  mutation CreateShoppingListMutation($name: String) {
+  mutation CreateShoppingListMutation($ownedById: ID!, $name: String) {
     createShoppingList(
+      ownedById: $ownedById
       name: $name
+    ) {
+      id
+      name
+      ownedBy {
+        id
+      }
+      products {
+        id
+      }
+    }
+  }
+`
+
+export const DELETE_SHOPPINGLIST_MUTATION = gql`
+  mutation DeleteShoppingListMutation($id: ID!) {
+    deleteShoppingList(
+      id: $id,
     ) {
       id
     }
@@ -149,9 +198,13 @@ export const ALL_PRODUCTS_QUERY = gql`
     allProducts {
       id
       inCart
+      quantity
       template {
         id
         name
+        unit
+        category
+        price
       }
     }
   }
@@ -164,16 +217,20 @@ export const MY_PRODUCTS_QUERY = gql`
     }){
       id
       inCart
+      quantity
       template {
         id
         name
+        unit
+        category
+        price
       }
     }
   }
 `
 
 export const CREATE_PRODUCT_MUTATION = gql`
-  mutation CreateProductMutation($templateId: ID, $shoppingListId: ID, $recipeId: ID, $quantity: Float) {
+  mutation CreateProductMutation($templateId: ID!, $shoppingListId: ID, $recipeId: ID, $quantity: Float) {
     createProduct(
       templateId: $templateId
       shoppingListId: $shoppingListId
@@ -181,10 +238,14 @@ export const CREATE_PRODUCT_MUTATION = gql`
       quantity: $quantity
     ) {
       id
+      quantity
       inCart
       template {
         id
         name
+        unit
+        category
+        price
       }
     }
   }
@@ -197,6 +258,7 @@ export const UPDATE_PRODUCT_MUTATION = gql`
       inCart: $inCart
     ) {
       id
+      quantity
     }
   }
 `
@@ -219,13 +281,17 @@ export const ALL_RECIPES_QUERY = gql`
       id
       name
       steps
+      notes
+      rating
       ingredients {
         id
         quantity
         template {
+          id
           name
           unit
           category
+          price
         }
       }
       ownedBy{
@@ -242,13 +308,17 @@ export const MY_RECIPES_QUERY = gql`
       id
       name
       steps
+      notes
+      rating
       ingredients {
         id
         quantity
         template {
+          id
           name
           unit
           category
+          price
         }
       }
       ownedBy{
@@ -264,13 +334,17 @@ export const GET_RECIPE_QUERY = gql`
       id
       name
       steps
+      notes
+      rating
       ingredients {
         id
         quantity
         template {
+          id
           name
           unit
           category
+          price
         }
       }
       ownedBy {
@@ -290,13 +364,17 @@ export const CREATE_RECIPE_MUTATION = gql`
       id
       name
       steps
+      notes
+      rating
       ingredients {
         id
         quantity
         template {
+          id
           name
           unit
           category
+          price
         }
       }
       ownedBy {
@@ -307,22 +385,28 @@ export const CREATE_RECIPE_MUTATION = gql`
 `
 
 export const UPDATE_RECIPE_MUTATION = gql`
-  mutation UpdateRecipeMutation($id: ID!,  $name: String, $steps: [String!]!) {
+  mutation UpdateRecipeMutation($id: ID!, $name: String, $steps: [String!], $notes: String, $rating: Float) {
     updateRecipe(
       id: $id,
       name: $name
       steps: $steps
+      notes: $notes
+      rating: $rating
     ) {
       id
       name
       steps
+      notes
+      rating
       ingredients {
         id
         quantity
         template {
+          id
           name
           unit
           category
+          price
         }
       }
       ownedBy {

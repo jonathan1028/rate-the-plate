@@ -8,16 +8,16 @@
         {{category}}
         <ul>
           <div
-            v-for='(row, index) in filteredData(category)'
+            v-for='(row, index) in filteredData'
             :key='index'
           >
-            <div>
+            <div v-if="row.template.category === category">
               <input
                 v-model="row.inCart"
                 @change="update(row)"
                 class="checkbox"
                 type="checkbox">
-              {{row.template.name}}
+              {{`${row.quantity} ${row.template.unit} of ${row.template.name}`}}
               <button
                 @click="deleteObject(row)"
               >X</button>
@@ -27,7 +27,7 @@
       </div>
     </div>
 
-    <ul>
+    <!-- <ul>
       <div
         v-for='(row, index) in filteredData'
         :key='index'
@@ -44,7 +44,7 @@
           >X</button>
         </div>
       </div>
-    </ul>
+    </ul> -->
   </div>
 </template>
 
@@ -54,30 +54,12 @@ export default {
   name: 'BaseList',
   props: {
     data: Array,
-    columns: Array,
     filterKey: String
   },
   data: function () {
-    var sortOrders = {}
-    const fields = this.columns.map(x => x.dbField)
-    fields.forEach(function (key) {
-      sortOrders[key] = 1
-    })
     return {
-      sortKey: '',
-      sortOrders: sortOrders,
+
       inCart: false
-    }
-  },
-  computed: {
-    getCategories: function () {
-      let categories = []
-      this.data.forEach(x => {
-        if (!categories.includes(x.category)) {
-          categories.push(x.category)
-        }
-      })
-      return categories
     }
   },
   filters: {
@@ -85,30 +67,30 @@ export default {
       return str.charAt(0).toUpperCase() + str.slice(1)
     }
   },
-  methods: {
-    filteredData: function (category) {
-      var sortKey = this.sortKey
-      var filterKey = this.filterKey && this.filterKey.toLowerCase()
-      var order = this.sortOrders[sortKey] || 1
-      let data = this.data.filter(x => {
-        return x.category === category
+  computed: {
+    getCategories: function () {
+      let categories = []
+      this.data.forEach(x => {
+        console.log('Category', x, x.template)
+        if (!categories.includes(x.template.category)) {
+          categories.push(x.template.category)
+        }
       })
+      console.log('Categories', categories)
+      return categories
+    },
+    filteredData: function () {
+      let data = this.data
+      let filterKey = this.filterKey && this.filterKey.toLowerCase()
       if (filterKey) {
         data = data.filter(function (row) {
-          return Object.keys(row).some(function (key) {
-            return String(row[key]).toLowerCase().indexOf(filterKey) > -1
-          })
-        })
-      }
-      if (sortKey) {
-        data = data.slice().sort(function (a, b) {
-          a = a[sortKey]
-          b = b[sortKey]
-          return (a === b ? 0 : a > b ? 1 : -1) * order
+          return String(row.template['name']).toLowerCase().indexOf(filterKey) > -1 || String(row.template['category']).toLowerCase().indexOf(filterKey) > -1
         })
       }
       return data
-    },
+    }
+  },
+  methods: {
     getName (owner) {
       return owner.firstName + ' ' + owner.lastName
     },
@@ -143,7 +125,7 @@ export default {
           const data = store.readQuery({
             query: MY_PRODUCTS_QUERY,
             variables: {
-              shoppingListId: this.$route.params.id
+              listId: this.$route.params.id
             }
           })
           // // Remove item from the list
@@ -155,7 +137,7 @@ export default {
           store.writeQuery({
             query: MY_PRODUCTS_QUERY,
             variables: {
-              shoppingListId: this.$route.params.id
+              listId: this.$route.params.id
             },
             data
           })
@@ -175,7 +157,7 @@ export default {
           const data = store.readQuery({
             query: MY_PRODUCTS_QUERY,
             variables: {
-              shoppingListId: this.$route.params.id
+              listId: this.$route.params.id
             }
           })
           // // Remove item from the list
@@ -187,7 +169,7 @@ export default {
           store.writeQuery({
             query: MY_PRODUCTS_QUERY,
             variables: {
-              shoppingListId: this.$route.params.id
+              listId: this.$route.params.id
             },
             data
           })

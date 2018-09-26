@@ -1,5 +1,5 @@
 # project: cjgn20e3o4i1w0105pjn3t5p6
-# version: 24
+# version: 26
 
 type AuthenticateUserPayload @model {
   id: ID! @isUnique
@@ -21,6 +21,7 @@ type User @model {
   vendors: [Vendor!]! @relation(name: "UserOnVendor")
   incomes: [Income!]! @relation(name: "UserOnIncome")
   recipes: [Recipe!]! @relation(name: "UsersRecipes")
+  shoppingLists: [ShoppingList!]! @relation(name: "UsersShoppingLists")
 }
 
 type File @model {
@@ -129,6 +130,8 @@ type Recipe @model {
   updatedAt: DateTime!
   name: String
   steps: [String!]
+  notes: String
+  rating: Float
   ingredients: [Product!]! @relation(name: "ProductsOnRecipe")
   ownedBy: User @relation(name: "UsersRecipes")
 }
@@ -139,4 +142,5 @@ type ShoppingList @model {
   updatedAt: DateTime!
   name: String
   products: [Product!]! @relation(name: "ProductsOnList")
+  ownedBy: User @relation(name: "UsersShoppingLists")
 }
