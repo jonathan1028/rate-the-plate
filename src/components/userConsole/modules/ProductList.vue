@@ -48,6 +48,8 @@ export default {
 
 <style lang="scss" scoped>
 .page {
+  height: 60vh;
+  overflow-y: auto;
   padding: 3vh;
   background-color: white;
 }
