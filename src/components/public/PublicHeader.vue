@@ -9,6 +9,8 @@
             <router-link to="/admin">About</router-link>
             <div>|</div>
             <router-link to="/newusers">Contact</router-link>
+            <div>|</div>
+            <router-link to="/recipes">Recipes</router-link>
           </div>
         </div>
         <!-- Login buttons   -->
