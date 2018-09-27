@@ -33,7 +33,7 @@ import ReadUser from '../components/adminConsole/ReadUser'
 Vue.use(Router)
 
 const router = new Router({
-  // mode: 'history',
+  mode: 'history',
   routes: [
     // ======================================= Public Pages =============================================
     {
@@ -183,17 +183,17 @@ const router = new Router({
   ]
 })
 // Need to add funcationality to default to a protected route if requiresAuth has not been set on a route
-// router.beforeEach((to, from, next) => {
-//   let currentUser = store.getters.authenticated
-//   if (store.getters.authenticated) {
-//     console.log('User is Authenticated')
-//   }
-//   let requiresAuth = to.matched.some(record => record.meta.requiresAuth)
-//   if (requiresAuth && !currentUser) {
-//     next('login')
-//   } else {
-//     next()
-//   }
-// })
+router.beforeEach((to, from, next) => {
+  let currentUser = store.getters.authenticated
+  if (store.getters.authenticated) {
+    console.log('User is Authenticated')
+  }
+  let requiresAuth = to.matched.some(record => record.meta.requiresAuth)
+  if (requiresAuth && !currentUser) {
+    next('login')
+  } else {
+    next()
+  }
+})
 
 export default router
