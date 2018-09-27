@@ -43,9 +43,10 @@ html {
   --text-color1: #47535d;
 }
 
-.main-content {
-  max-width: 90%;
-  margin: 4em auto;
+#app {
+  max-height: 100vh;
+  // max-width: 90%;
+  // overflow-y: auto;
 }
 
 .box {

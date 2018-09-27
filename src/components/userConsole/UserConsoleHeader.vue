@@ -59,9 +59,7 @@
         <delete-recipe/>
       </div>
     </div>
-    <div class="main-content">
-      <router-view></router-view>
-    </div>
+    <router-view></router-view>
   </div>
 </template>
 
@@ -175,10 +173,5 @@ export default {
 
 .login a:hover{
   color: gray;
-}
-.main-content {
-  top: 0vh;
-  max-width: 90%;
-  overflow: auto;
 }
 </style>

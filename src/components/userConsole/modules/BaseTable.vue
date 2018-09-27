@@ -210,6 +210,7 @@ table {
   border-radius: 3px;
   background-color: white;
   width: 100%;
+  overflow-y: auto;
 }
 th {
   height: 40px;

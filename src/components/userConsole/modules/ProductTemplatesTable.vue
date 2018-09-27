@@ -171,6 +171,10 @@ export default {
 
 <style lang="scss" scoped>
 /* tr:nth-child(3) { border: solid thin; } */
+.component {
+  height: 50vh;
+  overflow-y: auto;
+}
 table {
   /* border-collapse is needed to make the borders work properly on rows */
   margin-top: 1%;
