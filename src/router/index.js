@@ -3,11 +3,11 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import store from '../store/index'
 
-import PublicHeader from '@/components/public/PublicHeader'
+import PublicLayout from '@/components/public/PublicLayout'
 import Home from '@/components/public/Home'
-import Callback from '@/components/public/Callback'
+// import Callback from '@/components/public/Callback'
 import SignUp from '@/components/public/SignUp'
-import VolunteerPost from '@/components/public/VolunteerPost'
+import Login from '@/components/public/Login'
 
 import UserConsoleHeader from '@/components/userConsole/UserConsoleHeader'
 import Expenses from '../components/userConsole/expenses/Expenses'
@@ -38,32 +38,41 @@ const router = new Router({
     // ======================================= Public Pages =============================================
     {
       path: '/',
-      component: PublicHeader,
+      component: PublicLayout,
       children: [
+        {
+          path: '/',
+          redirect: '/home'
+        },
         {
           path: '/home',
           name: 'Home',
-          component: Home
+          component: Home,
+          meta: {
+            requiresAuth: false
+          }
         },
         {
-          path: '/',
-          redirect: '/expenses'
-        },
-        {
-          path: '/callback',
-          name: 'Callback',
-          component: Callback
+          path: '/login',
+          name: 'Login',
+          component: Login,
+          meta: {
+            requiresAuth: false
+          }
         },
         {
           path: '/signup',
           name: 'SignUp',
-          component: SignUp
-        },
-        {
-          path: '/volunteerpost',
-          name: 'VolunteerPost',
-          component: VolunteerPost
+          component: SignUp,
+          meta: {
+            requiresAuth: false
+          }
         }
+        // {
+        //   path: '/callback',
+        //   name: 'Callback',
+        //   component: Callback
+        // },
       ]
     },
     {
@@ -182,14 +191,15 @@ const router = new Router({
     }
   ]
 })
+
 // Need to add funcationality to default to a protected route if requiresAuth has not been set on a route
 router.beforeEach((to, from, next) => {
-  let currentUser = store.getters.authenticated
   if (store.getters.authenticated) {
-    console.log('User is Authenticated')
+    console.log('User is Authenticated from router')
   }
+
   let requiresAuth = to.matched.some(record => record.meta.requiresAuth)
-  if (requiresAuth && !currentUser) {
+  if (requiresAuth && !store.getters.authenticated) {
     next('login')
   } else {
     next()

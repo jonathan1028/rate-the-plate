@@ -1,27 +1,40 @@
-# project: cjgn20e3o4i1w0105pjn3t5p6
-# version: 26
-
-type AuthenticateUserPayload @model {
-  id: ID! @isUnique
-  userId: String!
-  token: String!
-}
+# project: cjmjw62xi3gjh0100nabw430x
+# version: 7
 
 type User @model {
   id: ID! @isUnique
   createdAt: DateTime!
-  updatedAt: DateTime!
-  email: String @isUnique
   auth0UserId: String @isUnique
+  email: String @isUnique
   password: String
-  name: String
-  persons: [Person!]! @relation(name: "UsersPersons")
+  firstName: String
+  lastName: String
   expenses: [Expense!]! @relation(name: "UsersExpenses")
-  opportunities: [Opportunity!]! @relation(name: "UserOpportunities")
-  vendors: [Vendor!]! @relation(name: "UserOnVendor")
   incomes: [Income!]! @relation(name: "UserOnIncome")
+  opportunities: [Opportunity!]! @relation(name: "UserOpportunities")
+  persons: [Person!]! @relation(name: "UsersPersons")
   recipes: [Recipe!]! @relation(name: "UsersRecipes")
   shoppingLists: [ShoppingList!]! @relation(name: "UsersShoppingLists")
+  updatedAt: DateTime!
+  vendors: [Vendor!]! @relation(name: "UserOnVendor")
+}
+
+type AuthenticateUserPayload @model {
+  id: ID! @isUnique
+  token: String!
+  userId: String!
+}
+
+type Expense @model {
+  amount: Float
+  category: String
+  createdAt: DateTime!
+  date: DateTime
+  description: String
+  id: ID! @isUnique
+  ownedBy: User @relation(name: "UsersExpenses")
+  updatedAt: DateTime!
+  vendor: Vendor @relation(name: "VendorOnExpense")
 }
 
 type File @model {
@@ -35,112 +48,100 @@ type File @model {
   url: String! @isUnique
 }
 
-type Person @model {
-  id: ID! @isUnique
+type Income @model {
+  amount: Float
+  category: String
   createdAt: DateTime!
+  date: DateTime!
+  description: String
+  id: ID! @isUnique
+  ownedBy: User! @relation(name: "UserOnIncome")
   updatedAt: DateTime!
-  firstName: String
-  lastName: String
+  vendor: Vendor @relation(name: "VendorOnIncome")
+}
+
+type Opportunity @model {
+  amount: Float
+  contacts: [Person!]! @relation(name: "PersonOpportunities")
+  createdAt: DateTime!
+  description: String
+  estimatedCloseDate: DateTime
+  id: ID! @isUnique
+  jobName: String
+  nextStep: String
+  ownedBy: User @relation(name: "UserOpportunities")
+  probability: Int
+  source: String
+  stage: String
+  status: String
+  updatedAt: DateTime!
+}
+
+type Person @model {
+  createdAt: DateTime!
   displayName: String
   email: String
+  firstName: String
+  id: ID! @isUnique
+  lastName: String
+  opportunities: [Opportunity!]! @relation(name: "PersonOpportunities")
+  ownedBy: User @relation(name: "UsersPersons")
   phone1: String
   phone2: String
   phoneTag1: String
   phoneTag2: String
-  ownedBy: User @relation(name: "UsersPersons")
-  opportunities: [Opportunity!]! @relation(name: "PersonOpportunities")
-}
-
-type Opportunity @model {
-  id: ID! @isUnique
-  createdAt: DateTime!
   updatedAt: DateTime!
-  jobName: String
-  stage: String
-  status: String
-  amount: Float
-  source: String
-  estimatedCloseDate: DateTime
-  probability: Int
-  nextStep: String
-  description: String
-  contacts: [Person!]! @relation(name: "PersonOpportunities")
-  ownedBy: User @relation(name: "UserOpportunities")
-}
-
-type Expense @model {
-  id: ID! @isUnique
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  amount: Float
-  category: String
-  description: String
-  date: DateTime
-  vendor: Vendor @relation(name: "VendorOnExpense")
-  ownedBy: User @relation(name: "UsersExpenses")
-}
-
-type Income @model {
-  id: ID! @isUnique
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  amount: Float
-  category: String
-  description: String
-  date: DateTime!
-  vendor: Vendor @relation(name: "VendorOnIncome")
-  ownedBy: User! @relation(name: "UserOnIncome")
-}
-
-type Vendor @model {
-  id: ID! @isUnique
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  name: String
-  income: Income @relation(name: "VendorOnIncome")
-  expense: Expense @relation(name: "VendorOnExpense")
-  ownedBy: User @relation(name: "UserOnVendor")
 }
 
 type Product @model {
-  id: ID! @isUnique
   createdAt: DateTime!
-  updatedAt: DateTime!
+  id: ID! @isUnique
   inCart: Boolean
   quantity: Float
-  shoppingList: ShoppingList @relation(name: "ProductsOnList")
   recipe: Recipe @relation(name: "ProductsOnRecipe")
+  shoppingList: ShoppingList @relation(name: "ProductsOnList")
   template: ProductTemplate @relation(name: "ProductTemplateOnProduct")
+  updatedAt: DateTime!
 }
 
 type ProductTemplate @model {
-  id: ID! @isUnique
+  category: String
   createdAt: DateTime!
-  updatedAt: DateTime!
+  id: ID! @isUnique
   name: String
   price: Float
-  category: String
-  unit: String
   products: [Product!]! @relation(name: "ProductTemplateOnProduct")
+  unit: String
+  updatedAt: DateTime!
 }
 
 type Recipe @model {
-  id: ID! @isUnique
   createdAt: DateTime!
-  updatedAt: DateTime!
-  name: String
-  steps: [String!]
-  notes: String
-  rating: Float
+  id: ID! @isUnique
   ingredients: [Product!]! @relation(name: "ProductsOnRecipe")
+  name: String
+  notes: String
   ownedBy: User @relation(name: "UsersRecipes")
+  rating: Float
+  steps: [String!]
+  updatedAt: DateTime!
 }
 
 type ShoppingList @model {
-  id: ID! @isUnique
   createdAt: DateTime!
-  updatedAt: DateTime!
+  id: ID! @isUnique
   name: String
-  products: [Product!]! @relation(name: "ProductsOnList")
   ownedBy: User @relation(name: "UsersShoppingLists")
+  products: [Product!]! @relation(name: "ProductsOnList")
+  updatedAt: DateTime!
+}
+
+type Vendor @model {
+  createdAt: DateTime!
+  expense: Expense @relation(name: "VendorOnExpense")
+  id: ID! @isUnique
+  income: Income @relation(name: "VendorOnIncome")
+  name: String
+  ownedBy: User @relation(name: "UserOnVendor")
+  updatedAt: DateTime!
 }
