@@ -76,11 +76,10 @@ export default {
     CreateRecipe, CreateShoppingList, DeleteRecipe
   },
   data () {
-    console.log('user', localStorage.getItem('user'))
+    console.log('user', this.$store.state.auth.user)
     return {
       toggleCreateRecipeModal: false,
-      toggleDeleteRecipeModal: false,
-      user: JSON.parse(localStorage.getItem('user'))
+      toggleDeleteRecipeModal: false
     }
   },
   apollo: {
@@ -100,7 +99,7 @@ export default {
       }
     `
   },
-  computed: mapGetters(['authenticated', 'userId']),
+  computed: mapGetters(['authenticated', 'user', 'userId']),
   methods: mapActions(['login', 'logout'])
 }
 </script>

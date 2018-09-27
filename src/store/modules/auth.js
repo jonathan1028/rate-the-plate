@@ -62,7 +62,7 @@ const mutations = {
     // localStorage.setItem('auth0UserId', state.auth0UserId)
     // console.log('auth0UserId', localStorage.getItem('auth0UserId'))
     // // Checks to see if the auth0 user has been created in the GraphCool db yet
-    router.push({ path: 'expenses' })
+    // router.push({ path: 'expenses' })
   },
 
   userId (state, userId) {
@@ -102,7 +102,7 @@ const actions = {
         // commit('authenticated')
         if (result.data.signinUser.user.id) {
           commit('authenticated', result.data.signinUser)
-          // dispatch('preloadUser', result.data.signinUser.user)
+          dispatch('preloadUser', result.data.signinUser.user)
           // commit('updateSelectedProfile', result.data.signinUser.user)
         } else {
           console.log('Incorrect username/password')
@@ -122,8 +122,9 @@ const actions = {
           id: user.id
         }
       }).then((result) => {
-        commit('updateUser', user)
-        router.push({ path: 'feed' })
+        commit('updateUser', result.data.User)
+        console.log('User from Auth', result.data.User)
+        router.push({ path: 'expenses' })
       }).catch((error) => {
         console.error(error)
       })

@@ -7,8 +7,8 @@ Vue.use(Vuex)
 
 // This will cause the entire auth module to persist through page refreshes
 const vuexLocal = new VuexPersistence({
-  storage: window.localStorage,
-  modules: ['auth']
+  storage: window.localStorage
+  // modules: ['auth']
 })
 
 const store = new Vuex.Store({
