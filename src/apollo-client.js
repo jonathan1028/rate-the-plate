@@ -14,7 +14,7 @@ import { getMainDefinition } from 'apollo-utilities'
 
 // Create an http link:
 const httpLink = new HttpLink({
-  // You should use an absolute URL here
+  // You should use an absolute URL here test
   // uri: 'http://localhost:4000/graphql'
   uri: 'https://api.graph.cool/simple/v1/cjmjw62xi3gjh0100nabw430x'
 })
