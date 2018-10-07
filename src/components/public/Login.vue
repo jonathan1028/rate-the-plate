@@ -1,7 +1,7 @@
 
 <template>
   <div class="_box loginContainer">
-    <div class="companyName">Good Citizen Network</div>
+    <div class="companyName">Rate the Plate</div>
     <div class="inputs">
       <div class="field">
         <label for="">Username</label>
