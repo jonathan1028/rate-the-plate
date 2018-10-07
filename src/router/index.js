@@ -16,6 +16,10 @@ import UpdateExpense from '../components/userConsole/expenses/UpdateExpense'
 import VendorsPage from '../components/userConsole/pages/VendorsPage'
 import ShoppingListsPage from '../components/userConsole/pages/ShoppingListsPage'
 
+// Restaurants
+import RestaurantsPage from '../components/userConsole/pages/RestaurantsPage'
+import RestaurantUpdatePage from '../components/userConsole/pages/RestaurantUpdatePage'
+
 // Products
 import ProductTemplatesPage from '../components/userConsole/pages/ProductTemplatesPage'
 import ProductTemplateUpdatePage from '../components/userConsole/pages/ProductTemplateUpdatePage'
@@ -86,6 +90,20 @@ const router = new Router({
       component: UserConsoleHeader,
       children: [
         // ------------------------------------------ Expense ----------------------------------
+        {
+          path: '/restaurants',
+          component: RestaurantsPage,
+          meta: {
+            requiresAuth: true
+          }
+        },
+        {
+          path: '/restaurant/:id',
+          component: RestaurantUpdatePage,
+          meta: {
+            requiresAuth: true
+          }
+        },
         {
           path: '/expenses',
           component: Expenses,

@@ -83,6 +83,85 @@ export const DELETE_USER_MUTATION = gql`
   }
 `
 
+// ----------------------------------------- Restaurants ---------------------------------------------
+
+export const ALL_RESTAURANTS_QUERY = gql`
+  query AllRestaurantsQuery {
+    allRestaurants {
+      id
+      name
+      foodTypeTags
+      location {
+        id
+        city
+      }
+    }
+  }
+`
+
+export const CREATE_RESTAURANT_MUTATION = gql`
+  mutation CreateRestaurantMutation($name: String, $foodTypeTags: [String!], $city: String) {
+    createRestaurant(
+      name: $name
+      foodTypeTags: $foodTypeTags
+      location: {
+        city: $city
+      }
+    ) {
+      id
+      name
+      foodTypeTags
+      location {
+        id
+        city
+      }
+    }
+  }
+`
+
+export const UPDATE_RESTAURANT_MUTATION = gql`
+  mutation UpdateRestaurantMutation($id: ID!, $name: String, $foodTypeTags: [String!], $city: String ) {
+    updateRestaurant(
+      id: $id
+      name: $name
+      foodTypeTags: $foodTypeTags
+      location: {
+        city: $city
+      }
+    ) {
+      id
+      name
+      foodTypeTags
+      location {
+        id
+        city
+      }
+    }
+  }
+`
+
+export const DELETE_RESTAURANT_MUTATION = gql`
+  mutation DeleteRestaurantMutation($id: ID!) {
+    deleteRestaurant(
+      id: $id,
+    ) {
+      id
+    }
+  }
+`
+
+// ----------------------------------------- Locations ---------------------------------------------
+
+export const DELETE_LOCATION_MUTATION = gql`
+  mutation DeleteLocationMutation($id: ID!) {
+    deleteLocation (
+      id: $id,
+    ) {
+      id
+    }
+  }
+`
+
 // ----------------------------------------- Expenses ---------------------------------------------
 export const ALL_EXPENSES_QUERY = gql`
   query AllExpensesQuery ($userId: ID!){

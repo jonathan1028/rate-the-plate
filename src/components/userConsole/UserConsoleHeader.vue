@@ -3,7 +3,7 @@
     <div class="header-content">
         <div class="main-nav">
           <!-- Logo -->
-          <div class="logo">Penny Pincher</div>
+          <div class="logo">Rate the Plate</div>
           <!-- Main navigation -->
           <div class="nav-buttons">
             <!-- Logged in navigation -->
@@ -15,15 +15,15 @@
               <router-link to="/opportunities">Opportunities</router-link>
               <div>|</div>
             </div> -->
-            <router-link to="/expenses">Expenses</router-link>
-            <div>|</div>
+            <router-link to="/restaurants">Restaurants</router-link>
+            <!-- <div>|</div>
             <router-link to="/vendors">Vendors</router-link>
             <div>|</div>
             <router-link to="/products">Products</router-link>
             <div>|</div>
             <router-link to="/shoppinglists">Shopping Lists</router-link>
             <div>|</div>
-            <router-link to="/recipes">Recipes</router-link>
+            <router-link to="/recipes">Recipes</router-link> -->
             <!-- <div>|</div>
             <router-link to="/admin">Admin Panel</router-link>
             <div>|</div>

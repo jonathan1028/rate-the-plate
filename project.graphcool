@@ -1,41 +1,5 @@
-# project: cjmjw62xi3gjh0100nabw430x
-# version: 7
-
-type User @model {
-  id: ID! @isUnique
-  createdAt: DateTime!
-  auth0UserId: String @isUnique
-  email: String @isUnique
-  password: String
-  firstName: String
-  lastName: String
-  expenses: [Expense!]! @relation(name: "UsersExpenses")
-  incomes: [Income!]! @relation(name: "UserOnIncome")
-  opportunities: [Opportunity!]! @relation(name: "UserOpportunities")
-  persons: [Person!]! @relation(name: "UsersPersons")
-  recipes: [Recipe!]! @relation(name: "UsersRecipes")
-  shoppingLists: [ShoppingList!]! @relation(name: "UsersShoppingLists")
-  updatedAt: DateTime!
-  vendors: [Vendor!]! @relation(name: "UserOnVendor")
-}
-
-type AuthenticateUserPayload @model {
-  id: ID! @isUnique
-  token: String!
-  userId: String!
-}
-
-type Expense @model {
-  amount: Float
-  category: String
-  createdAt: DateTime!
-  date: DateTime
-  description: String
-  id: ID! @isUnique
-  ownedBy: User @relation(name: "UsersExpenses")
-  updatedAt: DateTime!
-  vendor: Vendor @relation(name: "VendorOnExpense")
-}
+# project: cjmxv9ysk000e0162qbkc0s8h
+# version: 11
 
 type File @model {
   contentType: String!
@@ -48,100 +12,53 @@ type File @model {
   url: String! @isUnique
 }
 
-type Income @model {
-  amount: Float
-  category: String
-  createdAt: DateTime!
-  date: DateTime!
-  description: String
+type User @model {
   id: ID! @isUnique
-  ownedBy: User! @relation(name: "UserOnIncome")
-  updatedAt: DateTime!
-  vendor: Vendor @relation(name: "VendorOnIncome")
-}
-
-type Opportunity @model {
-  amount: Float
-  contacts: [Person!]! @relation(name: "PersonOpportunities")
   createdAt: DateTime!
-  description: String
-  estimatedCloseDate: DateTime
-  id: ID! @isUnique
-  jobName: String
-  nextStep: String
-  ownedBy: User @relation(name: "UserOpportunities")
-  probability: Int
-  source: String
-  stage: String
-  status: String
   updatedAt: DateTime!
-}
-
-type Person @model {
-  createdAt: DateTime!
-  displayName: String
-  email: String
   firstName: String
-  id: ID! @isUnique
   lastName: String
-  opportunities: [Opportunity!]! @relation(name: "PersonOpportunities")
-  ownedBy: User @relation(name: "UsersPersons")
-  phone1: String
-  phone2: String
-  phoneTag1: String
-  phoneTag2: String
-  updatedAt: DateTime!
+  email: String @isUnique
+  password: String
 }
 
-type Product @model {
-  createdAt: DateTime!
+type Restaurant @model {
   id: ID! @isUnique
-  inCart: Boolean
-  quantity: Float
-  recipe: Recipe @relation(name: "ProductsOnRecipe")
-  shoppingList: ShoppingList @relation(name: "ProductsOnList")
-  template: ProductTemplate @relation(name: "ProductTemplateOnProduct")
+  createdAt: DateTime!
   updatedAt: DateTime!
-}
-
-type ProductTemplate @model {
-  category: String
-  createdAt: DateTime!
-  id: ID! @isUnique
   name: String
-  price: Float
-  products: [Product!]! @relation(name: "ProductTemplateOnProduct")
-  unit: String
-  updatedAt: DateTime!
+  foodTypeTags: [String!]
+  location: Location @relation(name: "RestaurantLocation")
 }
 
-type Recipe @model {
-  createdAt: DateTime!
+type Plate @model {
   id: ID! @isUnique
-  ingredients: [Product!]! @relation(name: "ProductsOnRecipe")
-  name: String
-  notes: String
-  ownedBy: User @relation(name: "UsersRecipes")
-  rating: Float
-  steps: [String!]
+  createdAt: DateTime!
   updatedAt: DateTime!
+  name: String
+  description: String
 }
 
-type ShoppingList @model {
-  createdAt: DateTime!
+type Review @model {
   id: ID! @isUnique
-  name: String
-  ownedBy: User @relation(name: "UsersShoppingLists")
-  products: [Product!]! @relation(name: "ProductsOnList")
+  createdAt: DateTime!
   updatedAt: DateTime!
+  rating: String
+  comment: String
 }
 
-type Vendor @model {
-  createdAt: DateTime!
-  expense: Expense @relation(name: "VendorOnExpense")
+type Location @model {
   id: ID! @isUnique
-  income: Income @relation(name: "VendorOnIncome")
-  name: String
-  ownedBy: User @relation(name: "UserOnVendor")
+  createdAt: DateTime!
   updatedAt: DateTime!
+  name: String
+  addressLine1: String
+  addressLine2: String
+  city: String
+  state: String
+  zipcode: String
+  country: String
+  latitude: String
+  longitude: String
+  restaurant: Restaurant @relation(name: "RestaurantLocation")
 }
