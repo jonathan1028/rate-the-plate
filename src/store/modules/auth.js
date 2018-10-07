@@ -124,7 +124,7 @@ const actions = {
       }).then((result) => {
         commit('updateUser', result.data.User)
         console.log('User from Auth', result.data.User)
-        router.push({ path: 'expenses' })
+        router.push({ path: 'restaurants' })
       }).catch((error) => {
         console.error(error)
       })
